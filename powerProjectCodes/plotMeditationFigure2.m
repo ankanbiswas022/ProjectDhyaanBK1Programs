@@ -7,13 +7,14 @@ clear
 figure(2);
 comparisonStr = 'paired';
 % % protocolNames = {'G2'}; refChoices = {'none'};
-protocolListForPlot =  [{'EO1'}  {'EC1'}  {'G1'}]; 
-protocolNames = [{'EO1'}  {'EC1'}  {'G1'}]; 
+
+protocolNames = [{'EO1'}  {'EC1'}  {'G1'}];
 refChoices    = [{'none'} {'none'} {'none'}];
 
 % analysisChoice = 'st';
 analysisChoice = 'combined';
-analysisMode   = 'combineData';
+% analysisMode   = 'combineData';
+combineDataAcrossCommonProtocols = 0;
 
 badEyeCondition = 'ep';
 badTrialVersion = 'v8';
@@ -67,7 +68,9 @@ if numProtocols==1
     logPSDData = psdDataToReturn{groupPos};
     logPower = powerDataToReturn{groupPos,freqPos};
 
-else % Combine
+else % either combine or just get the data
+
+    % Combine
     logPSDDataTMP = cell(1,numProtocols);
     logPowerTMP = cell(1,numProtocols);
     goodSubjectNameListsTMP = cell(1,numProtocols);
@@ -77,57 +80,50 @@ else % Combine
         logPowerTMP{i} = powerDataTMP{groupPos,freqPos};
     end
 
-    % Average data across protocols
-    logPSDData = cell(1,2);
-    logPower = cell(1,2);
+    if combineDataAcrossCommonProtocols         % Average data across protocols
+        logPSDData = cell(1,2);
+        logPower = cell(1,2);
+        for i=1:2 % meditator/control
 
-    for i=1:2 % meditator/control
-
-        % Get subjects for each protocol
-        subjectNamesTMP = cell(1,numProtocols);
-        for j=1:numProtocols
-            subjectNamesTMP{j} = goodSubjectNameListsTMP{j}{groupPos,i};
-        end
-        
-        % Get common subjects
-        commonSubjects = subjectNamesTMP{1};
-        for j=2:numProtocols
-            commonSubjects = intersect(commonSubjects,subjectNamesTMP{j},'stable');
-        end
-
-        % Generate average data across protocols for each common subject
-        numCommonSubjects = length(commonSubjects);
-
-        logPSDCommon = zeros(numCommonSubjects,length(freqVals));
-        logPowerCommon = zeros(1,numCommonSubjects);
-        for j=1:numCommonSubjects
-            name = commonSubjects{j};
-
-            psdTMP=[]; powerTMP=[];
-            for k=1:numProtocols
-                pos = find(strcmp(name,subjectNamesTMP{k}));
-                psdTMP = cat(3,psdTMP,logPSDDataTMP{k}{i}(pos,:));
-                powerTMP = cat(2,powerTMP,logPowerTMP{k}{i}(pos));
+            % Get subjects for each protocol
+            subjectNamesTMP = cell(1,numProtocols);
+            for j=1:numProtocols
+                subjectNamesTMP{j} = goodSubjectNameListsTMP{j}{groupPos,i};
             end
 
-            logPSDCommon(j,:) = squeeze(mean(psdTMP,3));
-            logPowerCommon(j) = mean(powerTMP);
-        end
+            % Get common subjects
+            commonSubjects = subjectNamesTMP{1};
+            for j=2:numProtocols
+                commonSubjects = intersect(commonSubjects,subjectNamesTMP{j},'stable');
+            end
 
-        logPSDData{i} = logPSDCommon;
-        logPower{i} = logPowerCommon;
+            % Generate average data across protocols for each common subject
+            numCommonSubjects = length(commonSubjects);
+
+            logPSDCommon = zeros(numCommonSubjects,length(freqVals));
+            logPowerCommon = zeros(1,numCommonSubjects);
+            for j=1:numCommonSubjects
+                name = commonSubjects{j};
+
+                psdTMP=[]; powerTMP=[];
+                for k=1:numProtocols
+                    pos = find(strcmp(name,subjectNamesTMP{k}));
+                    psdTMP = cat(3,psdTMP,logPSDDataTMP{k}{i}(pos,:));
+                    powerTMP = cat(2,powerTMP,logPowerTMP{k}{i}(pos));
+                end
+
+                logPSDCommon(j,:) = squeeze(mean(psdTMP,3));
+                logPowerCommon(j) = mean(powerTMP);
+            end
+
+            logPSDData{i} = logPSDCommon;
+            logPower{i} = logPowerCommon;
+        end
+    else
+        logPSDData = logPSDDataTMP;
+        logPower = logPowerTMP;
     end
 end
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -144,29 +140,18 @@ freqLims = axisRangeList{1};
 yLimsPSD = axisRangeList{2};
 cLimsTopo = axisRangeList{3};
 
-hPSD = subplot(221);
-displayAndcompareData(hPSD,logPSDData,freqVals,displaySettings,yLimsPSD,1,useMedianFlag,~pairedDataFlag);
-xlim(hPSD,freqLims);
+for i=1:numProtocols
+    hPSD = hAllPlots(1,i);
+    displayAndcompareData(hPSD,logPSDData{i},freqVals,displaySettings,yLimsPSD,1,useMedianFlag,~pairedDataFlag);
+    xlim(hPSD,freqLims);
 
-% Add lines in PSD plots
-for k=1:2
-    line([freqRangeList{freqPos}(k) freqRangeList{freqPos}(k)],yLimsPSD,'color','k','parent',hPSD);
+    % Add lines in PSD plots
+    for k=1:2
+        line([freqRangeList{freqPos}(k) freqRangeList{freqPos}(k)],yLimsPSD,'color','k','parent',hPSD);
+    end
+
+    if ~strcmp(refChoices{1},'none')
+        line([0 freqVals(end)],[0 0],'color','k','parent',hPSD);
+    end
 end
 
-if ~strcmp(refChoices{1},'none')
-    line([0 freqVals(end)],[0 0],'color','k','parent',hPSD);
-end
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Plot Violin Plots %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-hPower = subplot(223);
-displaySettings.plotAxes = hPower;
-if ~useMedianFlag
-    displaySettings.parametricTest = 1;
-else
-    displaySettings.parametricTest = 0;
-end
-
-displaySettings.showYTicks=1;
-displaySettings.showXTicks=1;
-displayViolinPlot(logPower,[{displaySettings.colorNames(1,:)} {displaySettings.colorNames(2,:)}],1,1,1,pairedDataFlag,displaySettings);
