@@ -9,18 +9,18 @@ fontsize = 12;
 comparisonStr = 'paired';
 % % protocolNames = {'G2'}; refChoices = {'none'};
 
-% combineDataAcrossCommonProtocols = 0;
+combineDataAcrossCommonProtocols = 0;
 
-% protocolNames = [{'EO1'}  {'EC1'}  {'G1'} ];
-% refChoices    = [{'none'} {'none'} {'none'}] ;
-% analysisChoice = {'combined','combined','bl'};
+protocolNames = [{'EO1'}  {'EC1'}  {'G1'} ];
+refChoices    = [{'none'} {'none'} {'none'}] ;
+analysisChoice = {'combined','combined','bl'};
 
-combineDataAcrossCommonProtocols = 1;
+combineDataAcrossCommonProtocols = 0;
 
-combIndex      = {[1,4],[2,5],[3,6]};
-protocolNames  = [{'EO1'}  {'EC1'}  {'G1'} {'EO2'}  {'EC2'}  {'G2'}];
-refChoices     = [{'none'} {'none'} {'none'} {'none'}  {'none'}  {'none'}] ;
-analysisChoice = {'combined','combined','bl','combined','combined','bl'};
+% combIndex      = {[1,4],[2,5],[3,6]};
+% protocolNames  = [{'EO1'}  {'EC1'}  {'G1'} {'EO2'}  {'EC2'}  {'G2'}];
+% refChoices     = [{'none'} {'none'} {'none'} {'none'}  {'none'}  {'none'}] ;
+% analysisChoice = {'combined','combined','bl','combined','combined','bl'};
 
 badEyeCondition = 'ep';
 badTrialVersion = 'v8';
@@ -86,56 +86,11 @@ else % either combine or just get the data
         [psdDataTMP,powerDataTMP,goodSubjectNameListsTMP{i},topoplotDataTMP,freqVals] = displayPowerDataAllSubjects(subjectNameLists,protocolNames{i},analysisChoice{i},refChoices{i},badEyeCondition,badTrialVersion,badElectrodeRejectionFlag,stRange,freqRangeList,axisRangeList,cutoffList,useMedianFlag,hAllPlots,pairedDataFlag,0);
         for g=1:numGroups
             logPSDDataTMP{g,i} = psdDataTMP{g};
-            logPowerTMP{g,i} = powerDataTMP{g,freqPos};
+            logPowerTMP{g,i}   = powerDataTMP{g,freqPos};
         end
     end
-
-    if combineDataAcrossCommonProtocols         % Average data across protocols
-        % Average data across protocols
-        logPSDData = cell(1,2);
-        logPower = cell(1,2);
-
-        for i=1:2 % meditator/control
-
-            % Get subjects for each protocol
-            subjectNamesTMP = cell(1,numProtocols);
-            for j=1:numProtocols
-                subjectNamesTMP{j} = goodSubjectNameListsTMP{j}{groupPos,i};
-            end
-
-            % Get common subjects
-            commonSubjects = subjectNamesTMP{1};
-            for j=2:numProtocols
-                commonSubjects = intersect(commonSubjects,subjectNamesTMP{j},'stable');
-            end
-
-            % Generate average data across protocols for each common subject
-            numCommonSubjects = length(commonSubjects);
-
-            logPSDCommon = zeros(numCommonSubjects,length(freqVals));
-            logPowerCommon = zeros(1,numCommonSubjects);
-            for j=1:numCommonSubjects
-                name = commonSubjects{j};
-
-                psdTMP=[]; powerTMP=[];
-                for k=1:numProtocols
-                    pos = find(strcmp(name,subjectNamesTMP{k}));
-                    psdTMP = cat(3,psdTMP,logPSDDataTMP{k}{i}(pos,:));
-                    powerTMP = cat(2,powerTMP,logPowerTMP{k}{i}(pos));
-                end
-
-                logPSDCommon(j,:) = squeeze(mean(psdTMP,3));
-                logPowerCommon(j) = mean(powerTMP);
-            end
-
-            logPSDData{i} = logPSDCommon;
-            logPower{i} = logPowerCommon;
-        end
-
-    else
-        logPSDData = logPSDDataTMP;
-        logPower = logPowerTMP;
-    end
+    logPSDData = logPSDDataTMP;
+    logPower = logPowerTMP;
 end
 
 
