@@ -1,7 +1,7 @@
 % plotFigures
 comparisonStr = 'paired';
-protocolNames = {'G2'}; refChoices = {'G2'};
-% protocolNames = [{'G1'} {'G2'}]; refChoices = [{'G1'} {'G2'}];
+% protocolNames = {'G2'}; refChoices = {'G2'};
+protocolNames = [{'G1'} {'G2'}]; refChoices = [{'G1'} {'G2'}];
 
 analysisChoice = 'st';
 
