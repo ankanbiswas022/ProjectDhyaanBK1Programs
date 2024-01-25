@@ -1,24 +1,19 @@
 % Meditation Figure 2
 % Shows spontaneous gamma for EO1(combined), EC1(combined) and G1(Baseline)
 % ---------------------------------------------------------------------------------------
-% close all
+close all
 clear
 
-figure();
-% figH= figure('units','normalized','outerposition',[0 0 1 1]);
+% figure();
+
+ figH= figure('units','normalized','outerposition',[0 0 1 1]);
+colormap jet
 fontsize = 12;
 comparisonStr = 'paired';
-% % protocolNames = {'G2'}; refChoices = {'none'};
 
 protocolNames  = [{'G1'}  {'G2'}];
 refChoices     = [{'G1'} {'G2'}] ;
 analysisChoice = {'st','st',};
-
-
-% combIndex      = {[1,4],[2,5],[3,6]};
-% protocolNames  = [{'EO1'}  {'EC1'}  {'G1'} {'EO2'}  {'EC2'}  {'G2'}];
-% refChoices     = [{'none'} {'none'} {'none'} {'none'}  {'none'}  {'none'}] ;
-% analysisChoice = {'combined','combined','bl','combined','combined','bl'};
 
 badEyeCondition = 'ep';
 badTrialVersion = 'v8';
@@ -27,8 +22,8 @@ badElectrodeRejectionFlag = 1;
 stRange = [0.25 1.25]; % hard coded for now
 
 freqRangeList{1} = [8 13];  % alpha
-freqRangeList{2} = [25 40]; % modified slow-Gamma range
-freqRangeList{3} = [41 65]; % modified fast-Gamma range
+freqRangeList{2} = [20 34]; % modified slow-Gamma range
+freqRangeList{3} = [35 65]; % modified fast-Gamma range
 
 axisRangeList{1} = [0 100];    axisRangeName{1} = 'Freq Lims (Hz)';
 axisRangeList{2} = [-2.5 2.5]; axisRangeName{2} = 'YLims';
@@ -51,8 +46,9 @@ end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Make Plots %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 hAllPlots = [];
+clf
 hPSDAll   = getPlotHandles(2,1,[0.1 0.1 0.2 0.8],0.05,0.05);
-hTopo     = getPlotHandles(2,2,[0.36 0.1 0.2 0.8],0.01,0.05);
+hTopo     = getPlotHandles(2,2,[0.32 0.1 0.28 0.8],0.01,0.05);
 hTF       = getPlotHandles(2,2,[0.65 0.1 0.3 0.8],0.01,0.05);
 
 % Label the plots
@@ -74,6 +70,7 @@ numGroups = length(groupPos);
 numProtocols = length(protocolNames);
 logPSDDataTMP = cell(numGroups,numProtocols);
 logPowerTMP = cell(numGroups,numProtocols);
+logTopoDataTMP = cell(numGroups,numProtocols);
 goodSubjectNameListsTMP = cell(numGroups,numProtocols);
 
 
@@ -89,12 +86,12 @@ else % either combine or just get the data
         for g=1:numGroups
             logPSDDataTMP{g,i}   = psdDataTMP{g};
             logPowerTMP{g,i}     = powerDataTMP{g,freqPos};
-            topoplotDataTMP{g,i} = topoplotDataTMP{g};
+            logTopoDataTMP{g,i}  = topoplotDataTMP(:,freqPos); % for topoplot there is no groupwise data
         end
     end
     logPSDData  = logPSDDataTMP;
     logPower    = logPowerTMP;
-    logTopoData = topoplotDataTMP;
+    logTopoData = logTopoDataTMP;
 end
 
 
@@ -110,6 +107,10 @@ titleStr{2} = 'Controls';
 freqLims = axisRangeList{1};
 yLimsPSD = axisRangeList{2};
 cLimsTopo = axisRangeList{3};
+
+capType = 'actiCap64_UOL';
+x = load([capType 'Labels.mat']); montageLabels = x.montageLabels(:,2);
+x = load([capType '.mat']); montageChanlocs = x.chanlocs;
 
 for g=1:length(groupPos)
     for i=1:numProtocols
@@ -128,7 +129,7 @@ for g=1:length(groupPos)
 
         yticks(hPSD,yLimsPSD(1):1:yLimsPSD(end));
 
-        if g==2 && i==1
+        if g==1 && i==2
             legend('','Meditators','','Controls','FontWeight','bold','FontSize',12);
             legend('boxoff')
             text(75,1.2,'p<0.05','Color','k','FontSize',fontsize+3,'FontWeight','bold');
@@ -138,13 +139,16 @@ for g=1:length(groupPos)
 
         %%%%%%%%%%%%%%%%%%%%%%%%%%%% Plot topoplots %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-        for s=2:3 %  meditators  and control
-            capType = 'actiCap64_UOL';
-            x = load([capType 'Labels.mat']); montageLabels = x.montageLabels(:,2);
-            x = load([capType '.mat']); montageChanlocs = x.chanlocs;
-            axes(hTopo(i,s-1));
-            data = topoplotDataTMP{i,s};
-            topoplot(data,montageChanlocs,'electrodes','on','maplimits',cLimsTopo,'plotrad',0.6,'headrad',0.6); colorbar;
+        for s=1:2 %  meditators  and control           
+            axes(hTopo(i,s));
+            data = logTopoData{i}{s};
+            topoplot(data,montageChanlocs,'electrodes','on','maplimits',cLimsTopo,'plotrad',0.6,'headrad',0.6); 
+            if i==2 && s==1
+                ach=colorbar;
+                ach.Location='southoutside';
+                ach.Position =  [ach.Position(1) ach.Position(2)-0.05 ach.Position(3) ach.Position(4)];
+                ach.Label.String = '\Delta Power (dB)';
+            end
         end
     end
 
