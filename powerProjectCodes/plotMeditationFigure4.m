@@ -4,9 +4,7 @@
 close all
 clear
 
-% figure();
-
- figH= figure('units','normalized','outerposition',[0 0 1 1]);
+figH = figure('units','normalized','outerposition',[0 0 1 1]);
 colormap jet
 fontsize = 12;
 comparisonStr = 'paired';
@@ -18,6 +16,7 @@ analysisChoice = {'st','st',};
 badEyeCondition = 'ep';
 badTrialVersion = 'v8';
 badElectrodeRejectionFlag = 1;
+baselineRange = [-1 0];
 
 stRange = [0.25 1.25]; % hard coded for now
 
@@ -46,21 +45,26 @@ end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Make Plots %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 hAllPlots = [];
-clf
-hPSDAll   = getPlotHandles(2,1,[0.1 0.1 0.2 0.8],0.05,0.05);
-hTopo     = getPlotHandles(2,2,[0.32 0.1 0.28 0.8],0.01,0.05);
-hTF       = getPlotHandles(2,2,[0.65 0.1 0.3 0.8],0.01,0.05);
+hPSDAll   = getPlotHandles(2,1,[0.08 0.13 0.2 0.8],0.05,0.05);
+hTopo     = getPlotHandles(2,2,[0.32 0.13 0.25 0.8],0.01,0.05);
+hTF       = getPlotHandles(2,2,[0.63 0.13 0.3 0.8],0.01,0.05);
 
 % Label the plots
 
-annotation('textbox',[.105 .65 .1 .2], 'String','G1','EdgeColor','none','FontWeight','bold','FontSize',18,'Rotation',90);
-annotation('textbox',[.105 .18 .1 .2], 'String','G2','EdgeColor','none','FontWeight','bold','FontSize',18,'Rotation',90);
+annotation('textbox',[.106 .7 .1 .2], 'String','G1','EdgeColor','none','FontWeight','bold','FontSize',18,'Rotation',90);
+annotation('textbox',[.106 .24 .1 .2], 'String','G2','EdgeColor','none','FontWeight','bold','FontSize',18,'Rotation',90);
 
 xlabel(hPSDAll(2,1),'Frequency(Hz)','FontWeight','bold','FontSize',15);
 ylabel(hPSDAll(2,1),'\Delta Power (dB)','FontWeight','bold','FontSize',15);
 
 xlabel(hTF(2,1),'Time(s)','FontWeight','bold','FontSize',15);
 ylabel(hTF(2,1),'Frequency(Hz)','FontWeight','bold','FontSize',15);
+
+title(hTF(1,1),'Meditators');
+title(hTF(1,2),'Controls');
+
+title(hTopo(1,1),'Meditators');
+title(hTopo(1,2),'Controls');
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Get Data %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 groupPos = 1; % Occipital
@@ -130,19 +134,21 @@ for g=1:length(groupPos)
         yticks(hPSD,yLimsPSD(1):1:yLimsPSD(end));
 
         if g==1 && i==2
-            legend('','Meditators','','Controls','FontWeight','bold','FontSize',12);
-            legend('boxoff')
-            text(75,1.2,'p<0.05','Color','k','FontSize',fontsize+3,'FontWeight','bold');
-            text(75,0.8,'p<0.01','Color','c','FontSize',fontsize+3,'FontWeight','bold');
+%             legend('','Meditators','','Controls','FontWeight','bold','FontSize',12);
+%             legend('boxoff')
+            text(60,1.7-0.5,'Meditators(29)','FontSize',fontsize+3,'FontWeight','bold','Color','red');
+            text(60,1.7,'Controls(29)','FontSize',fontsize+3,'FontWeight','bold','Color','green');
+            text(42+5,-1.6,'p<0.05','Color','k','FontSize',fontsize+3,'FontWeight','bold');
+            text(65+5,-1.6,'p<0.01','Color','c','FontSize',fontsize+3,'FontWeight','bold');
         end
 
 
         %%%%%%%%%%%%%%%%%%%%%%%%%%%% Plot topoplots %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-        for s=1:2 %  meditators  and control           
+        for s=1:2 %  meditators  and control
             axes(hTopo(i,s));
             data = logTopoData{i}{s};
-            topoplot(data,montageChanlocs,'electrodes','on','maplimits',cLimsTopo,'plotrad',0.6,'headrad',0.6); 
+            topoplot(data,montageChanlocs,'electrodes','on','maplimits',cLimsTopo,'plotrad',0.6,'headrad',0.6);
             if i==2 && s==1
                 ach=colorbar;
                 ach.Location='southoutside';
@@ -150,26 +156,83 @@ for g=1:length(groupPos)
                 ach.Label.String = '\Delta Power (dB)';
             end
         end
+
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%% Plot TF Plots %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+        freqRange = [24 34]; % Show this range
+        timeLims = [-0.5 1];
+        freqLims = [0 100];
+        cLims = [-2 2];
+        load("meanTFDataProtocolWise.mat",'meanTFDataProtocolWise','tmpData');
+        diffTF = 1;
+        for p=1:2 %protocol
+            for t=1:2 %med/control
+                axes(hTF(p,t));
+                tfData = meanTFDataProtocolWise{t,p};
+
+                logP = log10(tfData);
+                baselinePower = mean(logP(tmpData.timeValsTF>=baselineRange(1) & tmpData.timeValsTF<=baselineRange(2),:));
+                if diffTF
+                    pcolor(tmpData.timeValsTF,tmpData.freqValsTF,10*(logP'- repmat(baselinePower',1,length(tmpData.timeValsTF))));
+                else
+                    pcolor(tmpData.timeValsTF,tmpData.freqValsTF,logP');
+                end
+
+                % Add labels
+                shading('interp');
+                yline([freqRange(1) freqRange(2)],'--k','LineWidth',2);
+                %  line(timeLims,[freqRange(1) freqRange(1)],'color','k','LineStyle','--','LineWidth',2);
+                %  line(timeLims,[freqRange(2) freqRange(2)],'color','k','LineStyle','--','LineWidth',2.5);
+
+                axis(hTF(p,t),[timeLims freqLims]);
+                clim(hTF(p,t),cLims);
+
+                % xticks and Yticks
+                if p==2 && t==1
+                    xlabel(hTF(p,t),'Time(s)');
+                else
+                    set(hTF(p,t),'Xticklabel',[]);
+                end
+
+                if p==2 && t==1
+                    ylabel(hTF(p,t),'Frequency (Hz)');
+
+                else
+                    set(hTF(p,t),'Yticklabel',[]);
+                end
+
+
+            end
+        end
     end
 
 end
 
+title(hTF(1,1),'Meditators');
+title(hTF(1,2),'Controls');
+
+axes(hTF(2,2));
+hc = colorbar('Position', [0.94 0.1301 0.0109 0.3755]);
+hc.FontSize         = 12;
+hc.Label.FontSize   = 12;
+hc.Label.FontWeight = 'bold';
+hc.Label.String = ['\Delta Power' '(dB)'];
+
 % common change across figure!
 set(findobj(gcf,'type','axes'),'box','off'...
-    ,'fontsize',fontsize...
     ,'FontWeight','Bold'...
     ,'TickDir','out'...
     ,'TickLength',[0.02 0.02]...
-    ,'linewidth',1.2...
+    ,'linewidth',1.3...
     ,'xcolor',[0 0 0]...
     ,'ycolor',[0 0 0]...
     );
 
-saveFlag=0;
+saveFlag=1;
 finalPlotsSaveFolder ='D:\Projects\ProjectDhyaan\BK1\ProjectDhyaanBK1Programs\powerProjectCodes\savedFigures';
 if saveFlag
     figH.Color = [1 1 1];
     savefig(figH,fullfile(finalPlotsSaveFolder,'MeditationFigure4.fig'));
-    print(figH,fullfile(finalPlotsSaveFolder,'MeditationFigure2'),'-dsvg','-r600');
-    print(figH,fullfile(finalPlotsSaveFolder,'MeditationFigure2'),'-dtiff','-r600');
+    print(figH,fullfile(finalPlotsSaveFolder,'MeditationFigure4'),'-dsvg','-r600');
+    print(figH,fullfile(finalPlotsSaveFolder,'MeditationFigure4'),'-dtiff','-r600');
 end

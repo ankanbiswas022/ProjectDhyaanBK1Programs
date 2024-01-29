@@ -1,7 +1,10 @@
 % display Time-frequency data individually for all subjects
+
+function tfDataAllSub = displayTFDataAllSubjects()
+
 clear; clf;
 comparisonStr = 'paired';
-protocolNameList = [{'G1'} {'G2'} {'M2'}];
+protocolNameList = [{'G1'} {'G2'} ];
 
 badEyeCondition = 'ep';
 badTrialVersion = 'v8';
@@ -60,8 +63,11 @@ hTF = getPlotHandles(maxNumSubjects,4*numProtocols,[0.05 0.05 0.9 0.9],0.005,0.0
 genderStr = [{'M'} {'F'}];
 subjectTypeStr = [{'Med'} {'Con'}];
 
-for i=1:2 % Gender
-    for j=1:2 % Meditator/Control
+tfDataAllSub = {};
+% tfBaselineDataAllSub = cell(numSubjects,numProtocols);
+
+for j=1:2 % Meditator/Control
+    for i=1:2 % Gender
         columnIndexList = 2*numProtocols*(i-1) + numProtocols*(j-1) + (1:numProtocols);
         subjectNamesTMP = subjectNameLists{i,j};
         numSubjectsThisCondition = length(subjectNamesTMP);
@@ -77,12 +83,19 @@ for i=1:2 % Gender
 
                 badElectrodes = tmpData.badElectrodes{p};
                 goodElecsInd    = not(ismember(tmpData.electrodeList,badElectrodes));
-                
+
                 if sum(goodElecsInd)>=cutoffNumElectrodes
                     meanTFPower = squeeze(mean(tmpData.tfPower{p}(goodElecsInd,:,:),1));
+
+                    %%%%%%%%%% saveing the TF values %%%%%%%%%%%%%%%%%%%%%%
+                    tfDataAllSub{j,i}{k,p} = meanTFPower;
+                    %%%%%%%%%% saveing the TF values %%%%%%%%%%%%%%%%%%%%%%
+
                     logP = log10(meanTFPower);
                     baselinePower = mean(logP(tmpData.timeValsTF>=baselineRange(1) & tmpData.timeValsTF<=baselineRange(2),:));
-                    
+
+
+
                     if diffTF
                         pcolor(hPlot,tmpData.timeValsTF,tmpData.freqValsTF,10*(logP'- repmat(baselinePower',1,length(tmpData.timeValsTF))));
                     else
@@ -143,3 +156,7 @@ hc.FontSize         = 10;
 hc.Label.FontSize   = 10;
 hc.Label.FontWeight = 'bold';
 hc.Label.String = ['\Delta Power' '(dB)'];
+
+save('tfDataAllSubPairedG1G2.mat','tfDataAllSub');
+save('meanTFDataProtocolWise.mat','tmpData','-append');
+end

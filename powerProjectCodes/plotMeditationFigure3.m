@@ -1,24 +1,16 @@
 % Meditation Figure 2
-% Shows spontaneous gamma for EO1(combined), EC1(combined) and G1(Baseline)
+% Shows spontaneous gamma for M1 (during Meditation)
 % ---------------------------------------------------------------------------------------
-% close all
+clf
 clear
 
-figure();
-% figH= figure('units','normalized','outerposition',[0 0 1 1]);
+figure(1);
 fontsize = 12;
 comparisonStr = 'paired';
-% % protocolNames = {'G2'}; refChoices = {'none'};
 
-protocolNames = [{'G1'}  {'G2'}];
-refChoices    = [{'G1'} {'G2'}] ;
-analysisChoice = {'st','st',};
-
-
-% combIndex      = {[1,4],[2,5],[3,6]};
-% protocolNames  = [{'EO1'}  {'EC1'}  {'G1'} {'EO2'}  {'EC2'}  {'G2'}];
-% refChoices     = [{'none'} {'none'} {'none'} {'none'}  {'none'}  {'none'}] ;
-% analysisChoice = {'combined','combined','bl','combined','combined','bl'};
+protocolNames = {'M1'};
+refChoices    = {'none'};
+analysisChoice = {'combined'};
 
 badEyeCondition = 'ep';
 badTrialVersion = 'v8';
@@ -50,24 +42,22 @@ else
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Make Plots %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-hAllPlots = [];
-hPSDAll  = getPlotHandles(2,1,[0.1 0.1 0.2 0.8],0.05,0.05);
-hTopo = getPlotHandles(2,2,[0.36 0.1 0.2 0.8],0.01,0.05);
-hTF   = getPlotHandles(2,2,[0.65 0.1 0.3 0.8],0.01,0.05);
+clf
+hPSD = getPlotHandles(1,2,[0.1 0.7 0.8 0.25],0.05);
+HViolin = getPlotHandles(3,2,[0.1 0.08 0.8 0.55],0.05,0.03);
 
 % Label the plots
+title(hAllPlots(1,1),'Occipital','FontWeight','bold','FontSize',18);
+title(hAllPlots(1,2),'Fronto-Central','FontWeight','bold','FontSize',18);
+title(hAllPlots(1,3),'G1','FontWeight','bold','FontSize',18);
+annotation('textbox',[.12 .65 .1 .2], 'String','Occipital','EdgeColor','none','FontWeight','bold','FontSize',18,'Rotation',90);
+annotation('textbox',[.12 .18 .1 .2], 'String','Fronto-Central','EdgeColor','none','FontWeight','bold','FontSize',18,'Rotation',90);
 
-annotation('textbox',[.105 .65 .1 .2], 'String','G1','EdgeColor','none','FontWeight','bold','FontSize',18,'Rotation',90);
-annotation('textbox',[.105 .18 .1 .2], 'String','G2','EdgeColor','none','FontWeight','bold','FontSize',18,'Rotation',90);
-
-xlabel(hPSDAll(2,1),'Frequency(Hz)','FontWeight','bold','FontSize',15);
-ylabel(hPSDAll(2,1),'\Delta Power (dB)','FontWeight','bold','FontSize',15);
-
-xlabel(hTF(2,1),'Time(s)','FontWeight','bold','FontSize',15);
-ylabel(hTF(2,1),'Frequency(Hz)','FontWeight','bold','FontSize',15);
+xlabel(hAllPlots(2,1),'Frequency(Hz)','FontWeight','bold','FontSize',15);
+ylabel(hAllPlots(2,1),'Power (log_{10}(\muV^2))','FontWeight','bold','FontSize',15);
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Get Data %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-groupPos = 1; % Occipital
+groupPos = [1,2]; % Occipital
 freqPos  = 2; % Slow gamma
 
 numGroups = length(groupPos);
@@ -78,7 +68,7 @@ goodSubjectNameListsTMP = cell(numGroups,numProtocols);
 
 
 if numProtocols==1
-    [psdDataToReturn,powerDataToReturn,goodSubjectNameListsToReturn,topoplotDataToReturn,freqVals,montageChanlocs] = displayPowerDataAllSubjects(subjectNameLists,protocolNames{1},analysisChoice,refChoices{1},badEyeCondition,badTrialVersion,badElectrodeRejectionFlag,stRange,freqRangeList,axisRangeList,cutoffList,useMedianFlag,hAllPlots,pairedDataFlag,0);
+    [psdDataToReturn,powerDataToReturn,goodSubjectNameListsToReturn,topoplotDataToReturn,freqVals] = displayPowerDataAllSubjects(subjectNameLists,protocolNames{1},analysisChoice,refChoices{1},badEyeCondition,badTrialVersion,badElectrodeRejectionFlag,stRange,freqRangeList,axisRangeList,cutoffList,useMedianFlag,hAllPlots,pairedDataFlag,0);
     logPSDData = psdDataToReturn{groupPos};
     logPower = powerDataToReturn{groupPos,freqPos};
 
@@ -87,9 +77,8 @@ else % either combine or just get the data
     for i=1:numProtocols
         [psdDataTMP,powerDataTMP,goodSubjectNameListsTMP{i},topoplotDataTMP,freqVals] = displayPowerDataAllSubjects(subjectNameLists,protocolNames{i},analysisChoice{i},refChoices{i},badEyeCondition,badTrialVersion,badElectrodeRejectionFlag,stRange,freqRangeList,axisRangeList,cutoffList,useMedianFlag,hAllPlots,pairedDataFlag,0);
         for g=1:numGroups
-            logPSDDataTMP{g,i}   = psdDataTMP{g};
-            logPowerTMP{g,i}     = powerDataTMP{g,freqPos};
-            topoplotDataTMP{g,i} = topoplotDataTMP{g,}
+            logPSDDataTMP{g,i} = psdDataTMP{g};
+            logPowerTMP{g,i}   = powerDataTMP{g,freqPos};
         end
     end
     logPSDData = logPSDDataTMP;
@@ -112,7 +101,7 @@ cLimsTopo = axisRangeList{3};
 
 for g=1:length(groupPos)
     for i=1:numProtocols
-        hPSD = hPSDAll(i,g);
+        hPSD = hAllPlots(g,i);
         displayAndcompareData(hPSD,logPSDData{g,i},freqVals,displaySettings,yLimsPSD,1,useMedianFlag,~pairedDataFlag);
         xlim(hPSD,freqLims);
 
@@ -133,22 +122,7 @@ for g=1:length(groupPos)
             text(75,1.2,'p<0.05','Color','k','FontSize',fontsize+3,'FontWeight','bold');
             text(75,0.8,'p<0.01','Color','c','FontSize',fontsize+3,'FontWeight','bold');
         end
-
-
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%% Plot topoplots %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-        for s=2:3 %  meditators  and control
-
-            capType = 'actiCap64_UOL';
-            x = load([capType 'Labels.mat']); montageLabels = x.montageLabels(:,2);
-            x = load([capType '.mat']); montageChanlocs = x.chanlocs;
-            axes(hTopo(i,s-1));
-            data = topoplotDataTMP{i,s};
-            topoplot(data,montageChanlocs,'electrodes','on','maplimits',cLimsTopo,'plotrad',0.6,'headrad',0.6); colorbar;
-
-        end
     end
-
 end
 
 % common change across figure!
@@ -161,12 +135,3 @@ set(findobj(gcf,'type','axes'),'box','off'...
     ,'xcolor',[0 0 0]...
     ,'ycolor',[0 0 0]...
     );
-
-saveFlag=0;
-finalPlotsSaveFolder ='D:\Projects\ProjectDhyaan\BK1\ProjectDhyaanBK1Programs\powerProjectCodes\savedFigures';
-if saveFlag
-    figH.Color = [1 1 1];
-    savefig(figH,fullfile(finalPlotsSaveFolder,'MeditationFigure4.fig'));
-    print(figH,fullfile(finalPlotsSaveFolder,'MeditationFigure2'),'-dsvg','-r600');
-    print(figH,fullfile(finalPlotsSaveFolder,'MeditationFigure2'),'-dtiff','-r600');
-end
