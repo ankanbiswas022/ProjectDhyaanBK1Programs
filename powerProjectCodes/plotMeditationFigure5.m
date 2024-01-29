@@ -127,8 +127,8 @@ for g=1:length(groupPos)
         if g==2 && i==1
             legend('','Meditators','','Controls','FontWeight','bold','FontSize',12);
             legend('boxoff')
-            text(75,1.2,'p<0.05','Color','k','FontSize',fontsize+3,'FontWeight','bold');
-            text(75,0.8,'p<0.01','Color','c','FontSize',fontsize+3,'FontWeight','bold');
+            text(75,1.2,'p<0.05','Color','c','FontSize',fontsize+3,'FontWeight','bold');
+            text(75,0.8,'p<0.01','Color','k','FontSize',fontsize+3,'FontWeight','bold');
         end
     end
 end

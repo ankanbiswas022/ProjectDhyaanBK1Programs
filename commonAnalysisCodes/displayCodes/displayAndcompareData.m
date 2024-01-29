@@ -1,8 +1,9 @@
-function displayAndcompareData(hPlot,data,xs,displaySettings,yLims,displaySignificanceFlag,useMedianFlag,nonMatchedFlag)
+function displayAndcompareData(hPlot,data,xs,displaySettings,yLims,displaySignificanceFlag,useMedianFlag,nonMatchedFlag,showOnlyLineFlag)
 
 if ~exist('displaySignificanceFlag','var'); displaySignificanceFlag=0;  end
 if ~exist('useMedianFlag','var');           useMedianFlag=1;            end
 if ~exist('nonMatchedFlag','var');          nonMatchedFlag=1;           end
+if ~exist('showErrorFlag','var');           showOnlyLineFlag=0;           end
 
 if useMedianFlag
     getLoc = @(g)(squeeze(median(g,1)));
@@ -23,9 +24,15 @@ for i=1:numGroups
         sData = std(data{i},[],1)/sqrt(size(data{i},1));
     end
 
-    patch([xs';flipud(xs')],[mData'-sData';flipud(mData'+sData')],displaySettings.colorNames(i,:),'linestyle','none','FaceAlpha',0.4);
+    if showOnlyLineFlag
+        plot(xs,mData,'color',displaySettings.colorNames(i,:),'linewidth',1.5);
+        patch([xs';flipud(xs')],[mData'-sData';flipud(mData'+sData')],displaySettings.colorNames(i,:),'linestyle','none','FaceAlpha',0.4);
+    else
+        lot(xs,mData,'color',displaySettings.colorNames(i,:),'linewidth',1.5);
+        patch([xs';flipud(xs')],[mData'-sData';flipud(mData'+sData')],displaySettings.colorNames(i,:),'linestyle','none','FaceAlpha',0.4);
+    end
     hold on;
-    plot(xs,mData,'color',displaySettings.colorNames(i,:),'linewidth',1);
+    plot(xs,mData,'color',displaySettings.colorNames(i,:),'linewidth',1.5);
 end
 
 set(gca,'fontsize',displaySettings.fontSizeLarge);
@@ -74,10 +81,10 @@ if displaySignificanceFlag % Do significance Testing
         clear xVals; xVals = [xBegPos xEndPos xEndPos xBegPos]';
 
         if (p<0.05)
-            patch(xVals,yVals,'c','linestyle','none');
+            patch(xVals,yVals,[0.8 0.8 0.8],'linestyle','none');
         end
         if (p<0.01)
-            patch(xVals,yVals,'k','linestyle','none');
+            patch(xVals,yVals,[0 0 0],'linestyle','none');
         end
     end
 end

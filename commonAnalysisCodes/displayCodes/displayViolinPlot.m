@@ -1,4 +1,4 @@
-function displayViolinPlot(dataArray,colorArray,showData,plotQuartiles,showSignificance,pairedDataFlag,displaySettings)
+function ax=displayViolinPlot(dataArray,colorArray,showData,plotQuartiles,showSignificance,pairedDataFlag,displaySettings)
 % uses statistical toolbox function ksdensity
 % adapted from "https://github.com/bastibe/Violinplot-Matlab"
 % Ref for violinplot: "stat.cmu.edu/~rnugent/PCMI2016/papers/ViolinPlots.pdf"
@@ -105,7 +105,7 @@ if pairedDataFlag
     for i=1:length(xPosDataGroups)
         xPosLine = xPosDataGroups(:,i)';
         yPosLine = [Y{1,1}(i) Y{1,2}(i)];
-        plot(xPosLine,yPosLine,'Color',[0.5 0.5 0.5]);
+        plot(xPosLine,yPosLine,'Color',[0.8 0.8 0.8]);
     end
 end
 
@@ -138,12 +138,12 @@ if showSignificance
     else
         set(ax,'YLim',[commonMin-yPositionLine*5 commonMax+yPositionLine*6]);
     end
-
+    
     if p<0.05
         text(mean(xPos)-xPositionText/4,commonMax+yPositionLine+0.3,'*','FontSize',textFontSize);
-        text(mean(xPos),commonMax+yPositionLine+0.3,[' (' num2str(round(p,4)) ')'],'FontSize',textFontSize);
+        text(mean(xPos)-xPositionText/5,commonMax+yPositionLine+0.3,[' (' num2str(round(p,4)) ')'],'FontSize',textFontSize);
     else
-        text(mean(xPos)-xPositionText,commonMax+yPositionLine+0.3,'N.S.','FontSize',textFontSize);
+        text(mean(xPos)-xPositionText/2,commonMax+yPositionLine+0.3,'N.S.','FontSize',textFontSize);
         text(mean(xPos),commonMax+yPositionLine+0.3,[' (' num2str(round(p,2)) ')'],'FontSize',textFontSize);
     end
 end
