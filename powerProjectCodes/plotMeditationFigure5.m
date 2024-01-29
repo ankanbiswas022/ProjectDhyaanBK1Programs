@@ -11,9 +11,9 @@ comparisonStr = 'paired';
 
 combineDataAcrossCommonProtocols = 0;
 
-protocolNames = [{'EO1'}  {'EC1'}  {'M1'} ];
-refChoices    = [{'none'} {'none'} {'none'}] ;
-analysisChoice = {'combined','combined','combined'};
+protocolNames = [{'M2'}  {'M2'}  ];
+refChoices    = [{'none'} {'M2'}] ;
+analysisChoice = {'bl','st'};
 
 combineDataAcrossCommonProtocols = 0;
 
@@ -53,17 +53,16 @@ end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Make Plots %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-hAllPlots = getPlotHandles(3,2,[0.1 0.1 0.85 0.8],0.05);
+hAllPlots = getPlotHandles(2,2,[0.1 0.1 0.85 0.8],0.05);
 % Label the plots
-title(hAllPlots(1,1),'Occipital','FontWeight','bold','FontSize',18);
-title(hAllPlots(1,2),'Fronto-Central','FontWeight','bold','FontSize',18);
-% title(hAllPlots(1,3),'M1','FontWeight','bold','FontSize',18);
-annotation('textbox',[.12 .75 .1 .2], 'String','EO1','EdgeColor','none','FontWeight','bold','FontSize',18,'Rotation',90);
-annotation('textbox',[.12 .45 .1 .2], 'String','EC1','EdgeColor','none','FontWeight','bold','FontSize',18,'Rotation',90);
-annotation('textbox',[.12 .18 .1 .2], 'String','M1','EdgeColor','none','FontWeight','bold','FontSize',18,'Rotation',90);
+title(hAllPlots(1,1),'M2 (Spontaneous)','FontWeight','bold','FontSize',18);
+title(hAllPlots(1,2),'M2 (Stimulus)','FontWeight','bold','FontSize',18);
 
-xlabel(hAllPlots(3,1),'Frequency(Hz)','FontWeight','bold','FontSize',15);
-ylabel(hAllPlots(3,1),'Power (log_{10}(\muV^2))','FontWeight','bold','FontSize',15);
+annotation('textbox',[.12 .65 .1 .2], 'String','Occipital','EdgeColor','none','FontWeight','bold','FontSize',18,'Rotation',90);
+annotation('textbox',[.12 .18 .1 .2], 'String','Fronto-Central','EdgeColor','none','FontWeight','bold','FontSize',18,'Rotation',90);
+
+xlabel(hAllPlots(2,1),'Frequency(Hz)','FontWeight','bold','FontSize',15);
+ylabel(hAllPlots(2,1),'Power (log_{10}(\muV^2))','FontWeight','bold','FontSize',15);
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Get Data %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 groupPos = [1,2]; % Occipital
@@ -110,11 +109,7 @@ cLimsTopo = axisRangeList{3};
 
 for g=1:length(groupPos)
     for i=1:numProtocols
-        hPSD = hAllPlots(i,g);
-        hPos =  get(hPSD,'Position');
-
-        % handaxes1 = axes('position', [0.35 0.8 0.15 0.1]);
-
+        hPSD = hAllPlots(g,i);
         displayAndcompareData(hPSD,logPSDData{g,i},freqVals,displaySettings,yLimsPSD,1,useMedianFlag,~pairedDataFlag);
         xlim(hPSD,freqLims);
 
@@ -129,34 +124,12 @@ for g=1:length(groupPos)
 
         yticks(hPSD,yLimsPSD(1):1:yLimsPSD(end));
 
-        if i==3 && g==1
+        if g==2 && i==1
             legend('','Meditators','','Controls','FontWeight','bold','FontSize',12);
             legend('boxoff')
-            text(75,1.2,'p<0.05','Color','c','FontSize',fontsize+3,'FontWeight','bold');
-            text(75,0.8,'p<0.01','Color','k','FontSize',fontsize+3,'FontWeight','bold');
+            text(75,1.2,'p<0.05','Color','k','FontSize',fontsize+3,'FontWeight','bold');
+            text(75,0.8,'p<0.01','Color','c','FontSize',fontsize+3,'FontWeight','bold');
         end
-
-        %%%%%%%%%%%%%%%%%%%%%%%%%%% Violin Plot %%%%%%%%%%%
-        hInset = axes('position', [hPos(1)+0.25 hPos(2)+0.11 0.15 0.12]);
-        displaySettings.plotAxes = hInset;
-        if ~useMedianFlag
-            displaySettings.parametricTest = 1;
-        else
-            displaySettings.parametricTest = 0;
-        end
-
-        if i==3 && g==1
-            displaySettings.showYTicks=1;
-            displaySettings.showXTicks=1;   
-            ylabel(hInset,'SG Power');
-        else
-            displaySettings.showYTicks=0;
-            displaySettings.showXTicks=0;
-
-        end
-        displaySettings.setYLim=[-1 2.3]; 
-        displaySettings.commonYLim = 1;
-        displayViolinPlot(logPower{g,i},[{displaySettings.colorNames(1,:)} {displaySettings.colorNames(2,:)}],1,1,1,pairedDataFlag,displaySettings);
     end
 end
 

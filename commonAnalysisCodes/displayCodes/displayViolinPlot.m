@@ -134,17 +134,17 @@ if showSignificance
 
     if commonYLim
         set(ax,'YLim',setYLim);
-        set(ax,'YTickLabel',[]);
+        % set(ax,'YTickLabel',[]);
     else
         set(ax,'YLim',[commonMin-yPositionLine*5 commonMax+yPositionLine*6]);
     end
 
     if p<0.05
-        text(mean(xPos)-xPositionText/4,commonMax+yPositionLine+1,'*','FontSize',textFontSize);
-        text(mean(xPos),commonMax+yPositionLine+1,[' (' num2str(round(p,4)) ')'],'FontSize',textFontSize);
+        text(mean(xPos)-xPositionText/4,commonMax+yPositionLine+0.3,'*','FontSize',textFontSize);
+        text(mean(xPos),commonMax+yPositionLine+0.3,[' (' num2str(round(p,4)) ')'],'FontSize',textFontSize);
     else
-        text(mean(xPos)-xPositionText,commonMax+yPositionLine+1,'N.S.','FontSize',textFontSize);
-        text(mean(xPos),commonMax+yPositionLine+1,[' (' num2str(round(p,2)) ')'],'FontSize',textFontSize);
+        text(mean(xPos)-xPositionText,commonMax+yPositionLine+0.3,'N.S.','FontSize',textFontSize);
+        text(mean(xPos),commonMax+yPositionLine+0.3,[' (' num2str(round(p,2)) ')'],'FontSize',textFontSize);
     end
 end
 end
