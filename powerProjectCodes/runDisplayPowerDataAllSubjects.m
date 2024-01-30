@@ -112,7 +112,6 @@ end
 
 %%%%%%%%%%%%%%%%%%%%%%%%% Plot Choices %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 hPanel7 = uipanel('Title','Plot','fontSize',fontSizeLarge,'Unit','Normalized','Position',[0.875 1-panelHeight 0.1 panelHeight]);
-
 hUseMedianFlag = uicontrol('Parent',hPanel7,'Unit','Normalized','Position',[0 2/3 1 1/3],'Style','togglebutton','String','Use Median','FontSize',fontSizeMedium);
 uicontrol('Parent',hPanel7,'Unit','Normalized','Position',[0 1/3 0.5 1/3],'Style','pushbutton','String','Rescale','FontSize',fontSizeMedium,'Callback',{@rescale_Callback});
 uicontrol('Parent',hPanel7,'Unit','Normalized','Position',[0.5 1/3 0.5 1/3],'Style','pushbutton','String','Clear','FontSize',fontSizeMedium,'Callback',{@cla_Callback});

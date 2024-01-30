@@ -5,6 +5,10 @@
 clf
 clear
 
+displayInsetFlag=1;
+figure('units','normalized','outerposition',[0 0 1 1]);
+set(gcf,'color','w');
+
 fontsize = 10;
 comparisonStr = 'paired';
 protocolNames = [{'EO1'}  {'EC1'}  {'M1'} ];
@@ -20,11 +24,11 @@ badElectrodeRejectionFlag = 1;
 stRange = [0.25 1.25]; % hard coded for now
 
 freqRangeList{1} = [8 13];  % alpha
-freqRangeList{2} = [25 45]; % modified slow-Gamma range
-freqRangeList{3} = [41 65]; % modified fast-Gamma range
+freqRangeList{2} = [25 80]; % modified slow-Gamma range
+% freqRangeList{3} = [41 65]; % modified fast-Gamma range
 
-axisRangeList{1} = [0 80];     axisRangeName{1} = 'Freq Lims (Hz)';
-axisRangeList{2} = [-2.5 2.5]; axisRangeName{2} = 'YLims';
+axisRangeList{1} = [0 90];     axisRangeName{1} = 'Freq Lims (Hz)';
+axisRangeList{2} = [-2. 2.5]; axisRangeName{2} = 'YLims';
 axisRangeList{3} = [-1.5 1.5]; axisRangeName{3} = 'cLims (topo)';
 
 cutoffList = [3 30];
@@ -44,12 +48,12 @@ end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Make Plots %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-hAllPlots = getPlotHandles(2,3,[0.1 0.1 0.85 0.8],0.05);
+hAllPlots = getPlotHandles(2,3,[0.1 0.13 0.85 0.8],0.05);
 
 % Label the plots
-title(hAllPlots(1,1),'EO1','FontWeight','bold','FontSize',18);
-title(hAllPlots(1,2),'EC1','FontWeight','bold','FontSize',18);
-title(hAllPlots(1,3),'M1','FontWeight','bold','FontSize',18);
+% title(hAllPlots(1,1),'EO1','FontWeight','bold','FontSize',18);
+% title(hAllPlots(1,2),'EC1','FontWeight','bold','FontSize',18);
+% title(hAllPlots(1,3),'M1','FontWeight','bold','FontSize',18);
 
 annotation('textbox',[.12 .60 .1 .2], 'String','Occipital','EdgeColor','none','FontWeight','bold','FontSize',20,'Rotation',90);
 annotation('textbox',[.12 .18 .12 .2], 'String','Fronto-Central','EdgeColor','none','FontWeight','bold','FontSize',20,'Rotation',90);
@@ -120,14 +124,12 @@ for g=1:length(groupPos)
         %%%%%%%%%%% Add -- lines from EO1 %%%%%%%%%%%%%%%
         if i==3  % M1 protocol
             p=1; % EO1
-            showErrorFlag = 1;
-            displayAndcompareData(hPSD,logPSDData{g,i},freqVals,displaySettings,yLimsPSD,1,useMedianFlag,~pairedDataFlag,showErrorFlag);
+            showOnlyLineFlag = 1;
+            lineStyle = '--';
+            displayAndcompareData(hPSD,logPSDData{g,p},freqVals,displaySettings,yLimsPSD,0,useMedianFlag,~pairedDataFlag,showOnlyLineFlag,lineStyle);
         end
 
         % Add lines in PSD plots
-        for k=1:2
-            line([freqRangeList{freqPos}(k) freqRangeList{freqPos}(k)],yLimsPSD,'LineStyle','--','LineWidth',2,'color','k','parent',hPSD);
-        end
 
         if ~strcmp(refChoices{1},'none')
             line([0 freqVals(end)],[0 0],'color','k','parent',hPSD);
@@ -142,41 +144,63 @@ for g=1:length(groupPos)
 
         % put the xtick and yticklabels
         if i==1
-            yticks(hPSD,yLimsPSD(1):1:yLimsPSD(end));
-            yticklabels(hPSD,yLimsPSD(1):1:yLimsPSD(end));
-        elseif g==2
-            xticks(hPSD,freqLims(1):10:freqLims(2));
-            xticklabels(hPSD,freqLims(1):10:freqLims(2));
+            yticks(hPSD,-2:2:yLimsPSD(end));
+            yticklabels(hPSD,-2:2:yLimsPSD(end));
+        else
+            yticks(hPSD,yLimsPSD(1):2:yLimsPSD(end));
+            yticklabels(hPSD,[]);
         end
+
+        if  g==2
+            xticks(hPSD,freqLims(1):20:freqLims(2));
+            xticklabels(hPSD,freqLims(1):20:freqLims(2));
+        else
+            xticks(hPSD,freqLims(1):20:freqLims(2));
+            xticklabels(hPSD,[]);
+        end
+
+        %         for k=1:2
+        %             gk=line([freqRangeList{freqPos}(k) freqRangeList{freqPos}(k)],yLimsPSD,'LineStyle','--','LineWidth',2,'color','k','parent',hPSD);
+        %             xline(freqRangeList{freqPos}(1) freqRangeList{freqPos}(2),'LineStyle','--','LineWidth',2,'color','k','parent';hPSD);
+        xline([freqRangeList{freqPos}(1)  freqRangeList{freqPos}(2)],'--k','LineWidth',2);
+        % end
 
         %%%%%%%%%%%%%%%%%%%%%%%%%%% Violin Plot %%%%%%%%%%%
         % hInset = axes('position', [hPos(1)+0.25 hPos(2)+0.11 0.15 0.12]);
-        hInset = axes('position', [hPos(1)+0.178 hPos(2)+0.2 0.07 0.16]);
-        displaySettings.plotAxes = hInset;
-        if ~useMedianFlag
-            displaySettings.parametricTest = 1;
-        else
-            displaySettings.parametricTest = 0;
-        end
+        if displayInsetFlag
+            
+%             hInset = axes('position', [hPos(1)+0.178 hPos(2)+0.2 0.07 0.16]);
+            hInset = axes('position', [hPos(1)+0.13 hPos(2)+0.2 0.07 0.16]);
+            displaySettings.plotAxes = hInset;
+            if ~useMedianFlag
+                displaySettings.parametricTest = 1;
+            else
+                displaySettings.parametricTest = 0;
+            end
 
-        if g==2 &&  i==1
-            displaySettings.showYTicks=1;
-            displaySettings.showXTicks=1;
-            ylabel(hInset,'Power (log_{10}(\muV^2))','FontSize',10);
-        else
-            displaySettings.showYTicks=0;
-            displaySettings.showXTicks=0;
+            if g==2 &&  i==1
+                displaySettings.showYTicks=1;
+                displaySettings.showXTicks=1;
+                ylabel(hInset,'Power (log_{10}(\muV^2))','FontSize',10);
+            else
+                displaySettings.showYTicks=0;
+                displaySettings.showXTicks=0;
 
+            end
+            displaySettings.setYLim=[-1 2.3];
+            displaySettings.commonYLim = 1;
+            displaySettings.xPositionText =0.8;
+            ax=displayViolinPlot(logPower{g,i},[{displaySettings.colorNames(1,:)} {displaySettings.colorNames(2,:)}],1,1,1,pairedDataFlag,displaySettings);
         end
-        displaySettings.setYLim=[-1 2.3];
-        displaySettings.commonYLim = 1;
-        displaySettings.xPositionText =0.8;
-        ax=displayViolinPlot(logPower{g,i},[{displaySettings.colorNames(1,:)} {displaySettings.colorNames(2,:)}],1,1,1,pairedDataFlag,displaySettings);
     end
 end
 
 xlabel(hAllPlots(2,1),'Frequency(Hz)','FontWeight','bold','FontSize',15);
 ylabel(hAllPlots(2,1),'Power (log_{10}(\muV^2))','FontWeight','bold','FontSize',15);
+
+title(hAllPlots(1,1),'EO1','FontWeight','bold','FontSize',18);
+title(hAllPlots(1,2),'EC1','FontWeight','bold','FontSize',18);
+title(hAllPlots(1,3),'M1','FontWeight','bold','FontSize',18);
 
 % common change across figure!
 set(findobj(gcf,'type','axes'),'box','off'...

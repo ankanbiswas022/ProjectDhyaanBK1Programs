@@ -1,9 +1,10 @@
-function displayAndcompareData(hPlot,data,xs,displaySettings,yLims,displaySignificanceFlag,useMedianFlag,nonMatchedFlag,showOnlyLineFlag)
+function displayAndcompareData(hPlot,data,xs,displaySettings,yLims,displaySignificanceFlag,useMedianFlag,nonMatchedFlag,showOnlyLineFlag,lineStyle)
 
 if ~exist('displaySignificanceFlag','var'); displaySignificanceFlag=0;  end
 if ~exist('useMedianFlag','var');           useMedianFlag=1;            end
 if ~exist('nonMatchedFlag','var');          nonMatchedFlag=1;           end
-if ~exist('showErrorFlag','var');           showOnlyLineFlag=0;           end
+if ~exist('showOnlyLineFlag','var');        showOnlyLineFlag=0;         end
+if ~exist('lineStyle','var');               lineStyle='--';             end
 
 if useMedianFlag
     getLoc = @(g)(squeeze(median(g,1)));
@@ -25,14 +26,12 @@ for i=1:numGroups
     end
 
     if showOnlyLineFlag
-        plot(xs,mData,'color',displaySettings.colorNames(i,:),'linewidth',1.5);
-        patch([xs';flipud(xs')],[mData'-sData';flipud(mData'+sData')],displaySettings.colorNames(i,:),'linestyle','none','FaceAlpha',0.4);
+        plot(xs,mData,'color',displaySettings.colorNames(i,:),'linewidth',2,'lineStyle',lineStyle);
     else
-        lot(xs,mData,'color',displaySettings.colorNames(i,:),'linewidth',1.5);
+        plot(xs,mData,'color',displaySettings.colorNames(i,:),'linewidth',2);
         patch([xs';flipud(xs')],[mData'-sData';flipud(mData'+sData')],displaySettings.colorNames(i,:),'linestyle','none','FaceAlpha',0.4);
     end
     hold on;
-    plot(xs,mData,'color',displaySettings.colorNames(i,:),'linewidth',1.5);
 end
 
 set(gca,'fontsize',displaySettings.fontSizeLarge);
