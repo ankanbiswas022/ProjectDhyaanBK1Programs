@@ -5,6 +5,7 @@ close all
 clear
 
 figH = figure('units','normalized','outerposition',[0 0 1 1]);
+set(figH,'color','w');
 colormap jet
 fontsize = 12;
 comparisonStr = 'paired';
@@ -28,8 +29,8 @@ axisRangeList{1} = [0 100];    axisRangeName{1} = 'Freq Lims (Hz)';
 axisRangeList{2} = [-2.5 2.5]; axisRangeName{2} = 'YLims';
 axisRangeList{3} = [-1.5 1.5]; axisRangeName{3} = 'cLims (topo)';
 
-cutoffList = [3 30];
 useMedianFlag = 0;
+cutoffList = [3 30];
 
 if strcmp(comparisonStr,'paired')
     pairedSubjectNameList = getPairedSubjectsBK1;
@@ -112,6 +113,7 @@ freqLims = axisRangeList{1};
 yLimsPSD = axisRangeList{2};
 cLimsTopo = axisRangeList{3};
 
+% loading Montage for the topoplot
 capType = 'actiCap64_UOL';
 x = load([capType 'Labels.mat']); montageLabels = x.montageLabels(:,2);
 x = load([capType '.mat']); montageChanlocs = x.chanlocs;

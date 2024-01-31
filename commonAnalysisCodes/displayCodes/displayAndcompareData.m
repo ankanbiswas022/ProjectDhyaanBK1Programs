@@ -19,7 +19,7 @@ for i=1:numGroups
     clear bootStat mData sData
     mData = getLoc(data{i});
     if useMedianFlag
-        bootStat = bootstrp(1000,getLoc,data{i});
+        bootStat = bootstrp(10000,getLoc,data{i});
         sData = std(bootStat);
     else
         sData = std(data{i},[],1)/sqrt(size(data{i},1));
