@@ -8,14 +8,19 @@ clear
 fontsize = 12;
 comparisonStr = 'paired';
 % % protocolNames = {'G2'}; refChoices = {'none'};
+colormap jet
 
 combineDataAcrossCommonProtocols = 0;
 
-protocolNames = [{'M2'}  {'M2'}  ];
-refChoices    = [{'none'} {'M2'}] ;
-analysisChoice = {'bl','st'};
+protocolNames  = [{'M2'}  {'M2'}  {'M2'} {'M1'} {'G2'}];
+refChoices     = [{'none'} {'none'} {'M2'}  {'none'} {'none'}] ;
+analysisChoice = {'bl','st','st','combined','bl'};
+
+groupNames = {'Meditators','Controls'};
+colorList  = [rgb('RoyalBlue');rgb('DarkCyan')];
 
 combineDataAcrossCommonProtocols = 0;
+plotTopoFlag = 1;
 
 % combIndex      = {[1,4],[2,5],[3,6]};
 % protocolNames  = [{'EO1'}  {'EC1'}  {'G1'} {'EO2'}  {'EC2'}  {'G2'}];
@@ -53,10 +58,10 @@ end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Make Plots %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-hAllPlots = getPlotHandles(2,2,[0.1 0.1 0.85 0.8],0.05);
-% Label the plots
-title(hAllPlots(1,1),'M2 (Spontaneous)','FontWeight','bold','FontSize',18);
-title(hAllPlots(1,2),'M2 (Stimulus)','FontWeight','bold','FontSize',18);
+hAllPlots = getPlotHandles(2,4,[0.1 0.1 0.85 0.8],0.05);
+hTopo     = hAllPlots(:,end);
+
+
 
 annotation('textbox',[.12 .65 .1 .2], 'String','Occipital','EdgeColor','none','FontWeight','bold','FontSize',18,'Rotation',90);
 annotation('textbox',[.12 .18 .1 .2], 'String','Fronto-Central','EdgeColor','none','FontWeight','bold','FontSize',18,'Rotation',90);
@@ -88,9 +93,11 @@ else % either combine or just get the data
             logPSDDataTMP{g,i} = psdDataTMP{g};
             logPowerTMP{g,i}   = powerDataTMP{g,freqPos};
         end
+        logTopoDataTMP{i,1}  = topoplotDataTMP(:,freqPos);
     end
-    logPSDData = logPSDDataTMP;
-    logPower = logPowerTMP;
+    logPSDData  = logPSDDataTMP;
+    logPower    = logPowerTMP;
+    logTopoData = logTopoDataTMP;
 end
 
 
@@ -106,6 +113,12 @@ titleStr{2} = 'Controls';
 freqLims = axisRangeList{1};
 yLimsPSD = axisRangeList{2};
 cLimsTopo = axisRangeList{3};
+
+% loading Montage for the topoplot
+capType = 'actiCap64_UOL';
+gridType = 'EEG';
+x = load([capType 'Labels.mat']); montageLabels = x.montageLabels(:,2);
+x = load([capType '.mat']); montageChanlocs = x.chanlocs;
 
 for g=1:length(groupPos)
     for i=1:numProtocols
@@ -130,10 +143,45 @@ for g=1:length(groupPos)
             text(75,1.2,'p<0.05','Color','c','FontSize',fontsize+3,'FontWeight','bold');
             text(75,0.8,'p<0.01','Color','k','FontSize',fontsize+3,'FontWeight','bold');
         end
+
+        %%%%%%%%%%%%%%%%%% Plot topoplot %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        if i==3
+            if plotTopoFlag
+                for s=1:2 %  meditators  and control
+                    axes(hTopo(s));
+                    title(groupNames{s});
+                    data = logTopoData{i,1}{s};                                                                                                                                                   data = logTopoData{i}{s};
+                    topoplot(data,montageChanlocs,'electrodes','on','maplimits',cLimsTopo,'plotrad',0.6,'headrad',0.6);
+                    if i==2 && s==1
+                        ach=colorbar;
+                        ach.Location='southoutside';
+                        ach.Position =  [ach.Position(1) ach.Position(2)-0.05 ach.Position(3) ach.Position(4)];
+                        ach.Label.String = '\Delta Power (dB)';
+                    end
+
+                    if s==1
+                        [electrodeGroupList,groupNameList] = getElectrodeGroups(gridType,capType);
+                        numGroups = length(electrodeGroupList);
+                        for n=1:numGroups
+                            showElecIDs = electrodeGroupList{n};
+                            topoplot_murty([],montageChanlocs,'electrodes','on','style','blank','drawaxis','off','nosedir','+X','emarkercolors',x,'plotchans',showElecIDs,'plotrad',0.65,'headrad',0.6,'emarker',{'.',colorList(n,:),14,1},'plotrad',0.6,'headrad',0.6);
+                        end
+                    end
+                end
+
+            end
+        end
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
     end
 end
 
+% Label the plots
+title(hAllPlots(1,1),'M2 (Spontaneous)','FontWeight','bold','FontSize',18);
+title(hAllPlots(1,2),'M2 (Stimulus)','FontWeight','bold','FontSize',18);
+
 % common change across figure!
+set(gcf,'color','w');
 set(findobj(gcf,'type','axes'),'box','off'...
     ,'fontsize',fontsize...
     ,'FontWeight','Bold'...
