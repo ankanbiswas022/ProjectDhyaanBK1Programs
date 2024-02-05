@@ -5,6 +5,10 @@ if ~exist('useMedianFlag','var');           useMedianFlag=1;            end
 if ~exist('nonMatchedFlag','var');          nonMatchedFlag=1;           end
 if ~exist('showOnlyLineFlag','var');        showOnlyLineFlag=0;         end
 if ~exist('lineStyle','var');               lineStyle='--';             end
+if ~exist('xscaleLogFlag','var');           xscaleLogFlag=0;            end
+
+xscaleLogFlag = displaySettings.xscaleLogFlag;
+% xscaleLogFlag = 0;
 
 if useMedianFlag
     getLoc = @(g)(squeeze(median(g,1)));
@@ -28,8 +32,18 @@ for i=1:numGroups
     if showOnlyLineFlag
         plot(xs,mData,'color',displaySettings.colorNames(i,:),'linewidth',2,'lineStyle',lineStyle);
     else
-        plot(xs,mData,'color',displaySettings.colorNames(i,:),'linewidth',2);
-        patch([xs';flipud(xs')],[mData'-sData';flipud(mData'+sData')],displaySettings.colorNames(i,:),'linestyle','none','FaceAlpha',0.4);
+        if xscaleLogFlag
+            if i==1 
+                xs=xs(2:end);
+            end
+            mData=mData(2:end);
+            sData=sData(2:end);
+            plot(xs,mData,'color',displaySettings.colorNames(i,:),'linewidth',2);
+            patch([xs';flipud(xs')],[mData'-sData';flipud(mData'+sData')],displaySettings.colorNames(i,:),'linestyle','none','FaceAlpha',0.4);
+        else
+            plot(xs,mData,'color',displaySettings.colorNames(i,:),'linewidth',2);
+            patch([xs';flipud(xs')],[mData'-sData';flipud(mData'+sData')],displaySettings.colorNames(i,:),'linestyle','none','FaceAlpha',0.4);
+        end
     end
     hold on;
 end

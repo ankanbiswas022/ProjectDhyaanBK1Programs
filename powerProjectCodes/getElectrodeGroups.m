@@ -1,9 +1,12 @@
 function [electrodeGroupList,groupNameList] = getElectrodeGroups(gridType,capType)
 
-[~,~,~,~,~,highPriorityElectrodeNums] = electrodePositionOnGrid(1,gridType,[],capType);
+[~,~,~,electrodeGroupList0,groupNameList0,highPriorityElectrodeNums] = electrodePositionOnGrid(1,gridType,[],capType);
 
 % Combine some groups
-electrodeGroupList{1} = highPriorityElectrodeNums; % now called occipital
+% electrodeGroupList{1} = highPriorityElectrodeNums; % now called occipital
+% groupNameList{1} = 'Occipital';
+
+electrodeGroupList{1} = electrodeGroupList0{1}; % now called occipital
 groupNameList{1} = 'Occipital';
 % electrodeGroupList{2} = [electrodeGroupList0{3} electrodeGroupList0{4}]; % Fronto-Central and Frontal
 % groupNameList{2} = 'Frontal-Central';
@@ -18,8 +21,9 @@ groupNameList{1} = 'Occipital';
 
 subFrontal            = [1 32      32+[1 2 29 30 5 28]];
 subFrontoCental       = [6 8 25 28 32+[9 24]];
+subFrontoTemporal = [4 31 9 26 32+[6 27 10 23]];
 % subTemporalTwo        = [9 26 32+[10 23 6 27]];
-electrodeGroupList{2} = [subFrontal subFrontoCental]; % Fronto-Central and Frontal
+electrodeGroupList{2} = [subFrontal subFrontoCental subFrontoTemporal]; % Fronto-Central and Frontal
 groupNameList{2}      = 'Sub-FrontoCentral';
 
 end
