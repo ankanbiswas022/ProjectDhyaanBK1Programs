@@ -119,12 +119,14 @@ displaySettings.xscaleLogFlag = 1;
 % displaySettings.colorNames(1,:) = [1 0 0];
 
 % Cyan and Blue (CMYK)
-displaySettings.colorNames(1,:) = [ 0.5000         0    0.5000];
-displaySettings.colorNames(2,:) = [ 0.2539    0.4102    0.8789];
-
-% RGB Color scheme
-% displaySettings.colorNames(1,:) = [ 1 0 0];
-% displaySettings.colorNames(2,:) = [ 0 1 0];
+if customColorMapFag
+    displaySettings.colorNames(1,:) = [ 0.5000         0    0.5000];
+    displaySettings.colorNames(2,:) = [ 0.2539    0.4102    0.8789];
+else
+    % RGB Color scheme
+    displaySettings.colorNames(1,:) = [ 1 0 0];
+    displaySettings.colorNames(2,:) = [ 0 1 0];
+end
 
 titleStr{1} = 'Meditators';
 titleStr{2} = 'Controls';
