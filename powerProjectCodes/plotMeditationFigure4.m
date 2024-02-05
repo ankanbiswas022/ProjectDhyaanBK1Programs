@@ -1,18 +1,23 @@
 % Meditation Figure 2
 % Shows spontaneous gamma for EO1(combined), EC1(combined) and G1(Baseline)
 % ---------------------------------------------------------------------------------------
-close all
+clf
 clear
+saveFlag=0;
 
-figH = figure('units','normalized','outerposition',[0 0 1 1]);
-set(figH,'color','w');
+% figH = figure('units','normalized','outerposition',[0 0 1 1]);
+
 colormap jet
 fontsize = 12;
 comparisonStr = 'paired';
 
-protocolNames  = [{'G1'}  {'G2'}];
-refChoices     = [{'G1'} {'G2'}] ;
-analysisChoice = {'st','st',};
+% protocolNames  = [{'G1'}  {'G2'}];
+% refChoices     = [{'G1'} {'G2'}] ;
+% analysisChoice = {'st','st',};
+
+protocolNames  = [ {'G1'}  {'G2'}   {'G1'}    {'G2'}   {'G1'}  {'G2'}   {'EO1'}];
+refChoices     = [ {'G1'}  {'G2'}   {'none'} {'none'} {'none'} {'none'} {'none'}] ;
+analysisChoice = {  'st',   'st',     'bl',    'bl',    'st',    'st',  'combined'};
 
 badEyeCondition = 'ep';
 badTrialVersion = 'v8';
@@ -25,9 +30,10 @@ freqRangeList{1} = [8 13];  % alpha
 freqRangeList{2} = [20 34]; % modified slow-Gamma range
 freqRangeList{3} = [35 65]; % modified fast-Gamma range
 
-axisRangeList{1} = [0 100];    axisRangeName{1} = 'Freq Lims (Hz)';
+axisRangeList{1} = [0 60];    axisRangeName{1} = 'Freq Lims (Hz)';
 axisRangeList{2} = [-2.5 2.5]; axisRangeName{2} = 'YLims';
-axisRangeList{3} = [-1.5 1.5]; axisRangeName{3} = 'cLims (topo)';
+% axisRangeList{3} = [-1.5 1.5]; axisRangeName{3} = 'cLims (topo)';
+axisRangeList{3} = [-2 2]; axisRangeName{3} = 'cLims (topo)';
 
 useMedianFlag = 0;
 cutoffList = [3 30];
@@ -46,9 +52,16 @@ end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Make Plots %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 hAllPlots = [];
-hPSDAll   = getPlotHandles(2,1,[0.08 0.13 0.2 0.8],0.05,0.05);
-hTopo     = getPlotHandles(2,2,[0.32 0.13 0.25 0.8],0.01,0.05);
-hTF       = getPlotHandles(2,2,[0.63 0.13 0.3 0.8],0.01,0.05);
+
+% for the 3 panels: a, b, c
+% hPSDAll   = getPlotHandles(2,1,[0.08 0.13 0.2 0.8],0.05,0.05);
+% hTopo     = getPlotHandles(2,2,[0.32 0.13 0.25 0.8],0.01,0.05);
+% hTF       = getPlotHandles(2,2,[0.63 0.13 0.3 0.8],0.01,0.05);
+
+hRawPSD   = getPlotHandles(2,2,[0.08 0.13 0.2 0.8],0.01,0.05);
+hPSDAll   = getPlotHandles(2,1,[0.32 0.13 0.1 0.8],0.05,0.05);
+hTopo     = getPlotHandles(2,2,[0.47 0.13 0.21 0.8],0.01,0.05);
+hTF       = getPlotHandles(2,2,[0.73 0.13 0.2 0.8],0.01,0.05);
 
 % Label the plots
 
@@ -118,94 +131,117 @@ capType = 'actiCap64_UOL';
 x = load([capType 'Labels.mat']); montageLabels = x.montageLabels(:,2);
 x = load([capType '.mat']); montageChanlocs = x.chanlocs;
 
+rawPlotIndex = 1;
 for g=1:length(groupPos)
     for i=1:numProtocols
-        hPSD = hPSDAll(i,g);
-        displayAndcompareData(hPSD,logPSDData{g,i},freqVals,displaySettings,yLimsPSD,1,useMedianFlag,~pairedDataFlag);
-        xlim(hPSD,freqLims);
 
-        % Add lines in PSD plots
-        for k=1:2
-            line([freqRangeList{freqPos}(k) freqRangeList{freqPos}(k)],yLimsPSD,'LineStyle','--','LineWidth',2,'color','k','parent',hPSD);
-        end
+        if i>2
+            if i== 7 % M1 combined
+                p=7; % EO1
+                for j=1:2
+                    hPSD = hRawPSD(j);
+                    showOnlyLineFlag = 1;
+                    lineStyle = '--';
+                    displaySettings.colorNames(1,:)  = rgb('Brown');
+                    displaySettings.colorNames(2,:)  = rgb('DarkGreen');
+                    displayAndcompareData(hPSD,logPSDData{g,p},freqVals,displaySettings,yLimsPSD,0,useMedianFlag,~pairedDataFlag,showOnlyLineFlag,lineStyle);
+                end
+            else
+                % for p=1:4
+                hPSD = hRawPSD(rawPlotIndex);
+                displayAndcompareData(hPSD,logPSDData{g,i},freqVals,displaySettings,yLimsPSD,1,useMedianFlag,~pairedDataFlag);
+                xlim(hPSD,freqLims);
+                % end
+            end
+            rawPlotIndex= rawPlotIndex+1;
+        else
+            hPSD = hPSDAll(i,g);
+            displayAndcompareData(hPSD,logPSDData{g,i},freqVals,displaySettings,yLimsPSD,1,useMedianFlag,~pairedDataFlag);
+            xlim(hPSD,freqLims);
 
-        if ~strcmp(refChoices{1},'none')
-            line([0 freqVals(end)],[0 0],'color','k','parent',hPSD);
-        end
+            % Add lines in PSD plots
+            for k=1:2
+                line([freqRangeList{freqPos}(k) freqRangeList{freqPos}(k)],yLimsPSD,'LineStyle','--','LineWidth',2,'color','k','parent',hPSD);
+            end
 
-        yticks(hPSD,yLimsPSD(1):1:yLimsPSD(end));
+            if ~strcmp(refChoices{1},'none')
+                line([0 freqVals(end)],[0 0],'color','k','parent',hPSD);
+            end
 
-        if g==1 && i==2
-%             legend('','Meditators','','Controls','FontWeight','bold','FontSize',12);
-%             legend('boxoff')
-            text(60,1.7-0.5,'Meditators(29)','FontSize',fontsize+3,'FontWeight','bold','Color','red');
-            text(60,1.7,'Controls(29)','FontSize',fontsize+3,'FontWeight','bold','Color','green');
-            text(42+5,-1.6,'p<0.05','Color','k','FontSize',fontsize+3,'FontWeight','bold');
-            text(65+5,-1.6,'p<0.01','Color','c','FontSize',fontsize+3,'FontWeight','bold');
-        end
+            yticks(hPSD,yLimsPSD(1):1:yLimsPSD(end));
+
+            % if g==1 && i==2
+            %     %             legend('','Meditators','','Controls','FontWeight','bold','FontSize',12);
+            %     %             legend('boxoff')
+            %     text(60,1.7-0.5,'Meditators(29)','FontSize',fontsize+3,'FontWeight','bold','Color','red');
+            %     text(60,1.7,'Controls(29)','FontSize',fontsize+3,'FontWeight','bold','Color','green');
+            %     text(42+5,-1.6,'p<0.05','Color','k','FontSize',fontsize+3,'FontWeight','bold');
+            %     text(65+5,-1.6,'p<0.01','Color','c','FontSize',fontsize+3,'FontWeight','bold');
+            % end
 
 
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%% Plot topoplots %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+            %%%%%%%%%%%%%%%%%%%%%%%%%%%% Plot topoplots %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-        for s=1:2 %  meditators  and control
-            axes(hTopo(i,s));
-            data = logTopoData{i}{s};
-            topoplot(data,montageChanlocs,'electrodes','on','maplimits',cLimsTopo,'plotrad',0.6,'headrad',0.6);
-            if i==2 && s==1
-                ach=colorbar;
-                ach.Location='southoutside';
-                ach.Position =  [ach.Position(1) ach.Position(2)-0.05 ach.Position(3) ach.Position(4)];
-                ach.Label.String = '\Delta Power (dB)';
+            for s=1:2 %  meditators  and control
+                axes(hTopo(i,s));
+                data = logTopoData{i}{s};
+                topoplot(data,montageChanlocs,'electrodes','on','maplimits',cLimsTopo,'plotrad',0.6,'headrad',0.6);
+                if i==2 && s==1
+                    ach=colorbar;
+                    ach.Location='southoutside';
+                    ach.Position =  [ach.Position(1) ach.Position(2)-0.05 ach.Position(3) ach.Position(4)];
+                    ach.Label.String = '\Delta Power (dB)';
+                end
+            end
+
+            %%%%%%%%%%%%%%%%%%%%%%%%%%%% Plot TF Plots %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+            freqRange = [24 34]; % Show this range
+            timeLims = [-0.5 1];
+            freqLimsTF = [0 80];
+            cLims = [-2 2];
+            load("meanTFDataProtocolWise.mat",'meanTFDataProtocolWise','tmpData');
+            diffTF = 1;
+            for p=1:2 %protocol
+                for t=1:2 %med/control
+                    axes(hTF(p,t));
+                    tfData = meanTFDataProtocolWise{t,p};
+
+                    logP = log10(tfData);
+                    baselinePower = mean(logP(tmpData.timeValsTF>=baselineRange(1) & tmpData.timeValsTF<=baselineRange(2),:));
+                    if diffTF
+                        pcolor(tmpData.timeValsTF,tmpData.freqValsTF,10*(logP'- repmat(baselinePower',1,length(tmpData.timeValsTF))));
+                    else
+                        pcolor(tmpData.timeValsTF,tmpData.freqValsTF,logP');
+                    end
+
+                    % Add labels
+                    shading('interp');
+                    yline([freqRange(1) freqRange(2)],'--k','LineWidth',2);
+                    %  line(timeLims,[freqRange(1) freqRange(1)],'color','k','LineStyle','--','LineWidth',2);
+                    %  line(timeLims,[freqRange(2) freqRange(2)],'color','k','LineStyle','--','LineWidth',2.5);
+
+                    axis(hTF(p,t),[timeLims freqLimsTF]);
+                    clim(hTF(p,t),cLims);
+
+                    % xticks and Yticks
+                    if p==2 && t==1
+                        xlabel(hTF(p,t),'Time(s)');
+                    else
+                        set(hTF(p,t),'Xticklabel',[]);
+                    end
+
+                    if p==2 && t==1
+                        ylabel(hTF(p,t),'Frequency (Hz)');
+
+                    else
+                        set(hTF(p,t),'Yticklabel',[]);
+                    end
+
+                end
             end
         end
 
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%% Plot TF Plots %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-        freqRange = [24 34]; % Show this range
-        timeLims = [-0.5 1];
-        freqLims = [0 100];
-        cLims = [-2 2];
-        load("meanTFDataProtocolWise.mat",'meanTFDataProtocolWise','tmpData');
-        diffTF = 1;
-        for p=1:2 %protocol
-            for t=1:2 %med/control
-                axes(hTF(p,t));
-                tfData = meanTFDataProtocolWise{t,p};
-
-                logP = log10(tfData);
-                baselinePower = mean(logP(tmpData.timeValsTF>=baselineRange(1) & tmpData.timeValsTF<=baselineRange(2),:));
-                if diffTF
-                    pcolor(tmpData.timeValsTF,tmpData.freqValsTF,10*(logP'- repmat(baselinePower',1,length(tmpData.timeValsTF))));
-                else
-                    pcolor(tmpData.timeValsTF,tmpData.freqValsTF,logP');
-                end
-
-                % Add labels
-                shading('interp');
-                yline([freqRange(1) freqRange(2)],'--k','LineWidth',2);
-                %  line(timeLims,[freqRange(1) freqRange(1)],'color','k','LineStyle','--','LineWidth',2);
-                %  line(timeLims,[freqRange(2) freqRange(2)],'color','k','LineStyle','--','LineWidth',2.5);
-
-                axis(hTF(p,t),[timeLims freqLims]);
-                clim(hTF(p,t),cLims);
-
-                % xticks and Yticks
-                if p==2 && t==1
-                    xlabel(hTF(p,t),'Time(s)');
-                else
-                    set(hTF(p,t),'Xticklabel',[]);
-                end
-
-                if p==2 && t==1
-                    ylabel(hTF(p,t),'Frequency (Hz)');
-
-                else
-                    set(hTF(p,t),'Yticklabel',[]);
-                end
-
-
-            end
-        end
     end
 
 end
@@ -221,6 +257,7 @@ hc.Label.FontWeight = 'bold';
 hc.Label.String = ['\Delta Power' '(dB)'];
 
 % common change across figure!
+set(gcf,'color','w');
 set(findobj(gcf,'type','axes'),'box','off'...
     ,'FontWeight','Bold'...
     ,'TickDir','out'...
@@ -230,7 +267,7 @@ set(findobj(gcf,'type','axes'),'box','off'...
     ,'ycolor',[0 0 0]...
     );
 
-saveFlag=1;
+
 finalPlotsSaveFolder ='D:\Projects\ProjectDhyaan\BK1\ProjectDhyaanBK1Programs\powerProjectCodes\savedFigures';
 if saveFlag
     figH.Color = [1 1 1];
