@@ -1,0 +1,12 @@
+*.asv
+*.log
+*.fig
+*.tif
+*.png
+*.jpg
+*.svg
+*.eps
+*.emf
+powerProjectCodes/draftCodes/
+powerProjectCodes/.vscode/
+powerProjectCodes/backUpData/

@@ -7,7 +7,8 @@ clear
 plotTopoFlag = 1;
 plotSlopeFlag = 1;
 displayInsetFlag = 1;
-displaySignificanceFlag =0; %for slope topoplot
+customColorMapFag = 0;
+displaySignificanceFlag = 0; % for slope topoplot
 
 fontsize = 12;
 comparisonStr  = 'paired';
@@ -119,7 +120,7 @@ displaySettings.xscaleLogFlag = 1;
 
 % Cyan and Blue (CMYK)
 displaySettings.colorNames(1,:) = [ 0.5000         0    0.5000];
-displaySettings.colorNames(2,:) = [  0.2539    0.4102    0.8789];
+displaySettings.colorNames(2,:) = [ 0.2539    0.4102    0.8789];
 
 % RGB Color scheme
 % displaySettings.colorNames(1,:) = [ 1 0 0];
@@ -231,3 +232,9 @@ ylabel(hAllPlots(2,1),'Power (log_{10}(\muV^2))','FontWeight','bold','FontSize',
 title(hAllPlots(1,1),'EO1','FontWeight','bold','FontSize',18);
 title(hAllPlots(1,2),'EC1','FontWeight','bold','FontSize',18);
 title(hAllPlots(1,3),'M1','FontWeight','bold','FontSize',18);
+
+if customColorMapFag
+    % red-white-blue
+    mycolormap = customcolormap(linspace(0,1,11), {'#68011d','#b5172f','#d75f4e','#f7a580','#fedbc9','#f5f9f3','#d5e2f0','#93c5dc','#4295c1','#2265ad','#062e61'});
+    colormap(mycolormap);
+end
