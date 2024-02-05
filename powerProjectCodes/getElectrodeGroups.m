@@ -7,12 +7,12 @@ function [electrodeGroupList,groupNameList] = getElectrodeGroups(gridType,capTyp
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Occipital Electrodes %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % Option 1: Choose highPriority electrodes
-% electrodeGroupList{1} = highPriorityElectrodeNums; % now called occipital
-% groupNameList{1} = 'Occipital';
+electrodeGroupList{1} = highPriorityElectrodeNums; % now called occipital
+groupNameList{1} = 'Occipital';
 
 % Option 2: Choose occipital electrodes
-electrodeGroupList{1} = electrodeGroupList0{1}; % now called occipital
-groupNameList{1} = 'Occipital';
+% electrodeGroupList{1} = electrodeGroupList0{1}; % now called occipital
+% groupNameList{1} = 'Occipital';
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Fronto-Central Electrodes %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
