@@ -7,7 +7,7 @@ if ~exist('showOnlyLineFlag','var');        showOnlyLineFlag=0;         end
 if ~exist('lineStyle','var');               lineStyle='--';             end
 if ~exist('xscaleLogFlag','var');           xscaleLogFlag=0;            end
 
-xscaleLogFlag = displaySettings.xscaleLogFlag;
+% xscaleLogFlag = displaySettings.xscaleLogFlag;
 % xscaleLogFlag = 0;
 
 if useMedianFlag
@@ -18,7 +18,7 @@ end
 
 numGroups = length(data);
 
-axes(hPlot);
+% axes(hPlot);
 for i=1:numGroups
     clear bootStat mData sData
     mData = getLoc(data{i});
@@ -30,7 +30,7 @@ for i=1:numGroups
     end
 
     if showOnlyLineFlag
-        plot(xs,mData,'color',displaySettings.colorNames(i,:),'linewidth',2,'lineStyle',lineStyle);
+        plot(hPlot,xs,mData,'color',displaySettings.colorNames(i,:),'linewidth',2,'lineStyle',lineStyle);
     else
         if xscaleLogFlag
             if i==1 
@@ -38,18 +38,18 @@ for i=1:numGroups
             end
             mData=mData(2:end);
             sData=sData(2:end);
-            plot(xs,mData,'color',displaySettings.colorNames(i,:),'linewidth',2);
-            patch([xs';flipud(xs')],[mData'-sData';flipud(mData'+sData')],displaySettings.colorNames(i,:),'linestyle','none','FaceAlpha',0.4);
+            plot(hPlot,xs,mData,'color',displaySettings.colorNames(i,:),'linewidth',2);
+            patch(hPlot,[xs';flipud(xs')],[mData'-sData';flipud(mData'+sData')],displaySettings.colorNames(i,:),'linestyle','none','FaceAlpha',0.4,'Parent',hPlot);
         else
-            plot(xs,mData,'color',displaySettings.colorNames(i,:),'linewidth',2);
-            patch([xs';flipud(xs')],[mData'-sData';flipud(mData'+sData')],displaySettings.colorNames(i,:),'linestyle','none','FaceAlpha',0.4);
+            plot(hPlot,xs,mData,'color',displaySettings.colorNames(i,:),'linewidth',2);
+            patch([xs';flipud(xs')],[mData'-sData';flipud(mData'+sData')],displaySettings.colorNames(i,:),'linestyle','none','FaceAlpha',0.4,'Parent',hPlot);
         end
     end
     hold on;
 end
 
-set(gca,'fontsize',displaySettings.fontSizeLarge);
-set(gca,'TickDir','out','TickLength',displaySettings.tickLengthMedium);
+set(hPlot,'fontsize',displaySettings.fontSizeLarge);
+set(hPlot,'TickDir','out','TickLength',displaySettings.tickLengthMedium);
 
 if exist('yLims','var') && ~isempty(yLims)
     ylim(yLims);
