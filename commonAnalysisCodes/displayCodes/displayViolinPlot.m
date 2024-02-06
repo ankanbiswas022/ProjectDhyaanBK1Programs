@@ -47,6 +47,7 @@ end
 ax.XTick=[1 2];
 if showXTicks
     ax.XTickLabel = xTickLabels;
+%     ax.XTickLabelRotation = 45;
 else
     ax.XTickLabel = [];
 end
@@ -93,11 +94,11 @@ for pos=1:size(Y,2)
         hiwhisker = quartiles(3) + 1.5*IQR;
         hiwhisker = min(hiwhisker, max(data(data < hiwhisker)));
 
+        plot([pos pos], [lowhisker hiwhisker]);
         patch(pos+[-1,1,1,-1]*BoxWidth, ...
             [quartiles(1) quartiles(1) quartiles(3) quartiles(3)], ...
             [0.5 0.5 0.5]);
-        plot([pos pos], [lowhisker hiwhisker]);
-        scatter(pos, quartiles(2), medianMarkerSize, [1 1 1], 'filled');
+        scatter(pos, quartiles(2), medianMarkerSize+4, [0 0 0], 'filled');
     end
 end
 
@@ -130,7 +131,7 @@ if showSignificance
     commonMax=max([max(Y{:,1}) max(Y{:,2})]);
     commonMin = min([max(Y{:,1}) min(Y{:,2})]);
     yPos = [commonMax+yPositionLine commonMax+yPositionLine];
-    plot(xPos,yPos);
+    plot(xPos,yPos,'-k');
 
     if commonYLim
         set(ax,'YLim',setYLim);
@@ -140,11 +141,11 @@ if showSignificance
     end
     
     if p<0.05
-        text(mean(xPos)-xPositionText/4,commonMax+yPositionLine+0.3,'*','FontSize',textFontSize);
-        text(mean(xPos)-xPositionText/5,commonMax+yPositionLine+0.3,[' (' num2str(round(p,4)) ')'],'FontSize',textFontSize);
+        text(mean(xPos)-xPositionText/3,commonMax+yPositionLine+0.3,'*','FontSize',textFontSize+2,'FontWeight','bold');
+        text(mean(xPos)-xPositionText/5,commonMax+yPositionLine+0.3,[' (' num2str(round(p,4)) ')'],'FontSize',textFontSize+2,'FontWeight','bold');
     else
-        text(mean(xPos)-xPositionText/2,commonMax+yPositionLine+0.3,'N.S.','FontSize',textFontSize);
-        text(mean(xPos),commonMax+yPositionLine+0.3,[' (' num2str(round(p,2)) ')'],'FontSize',textFontSize);
+        text(mean(xPos)-xPositionText/3,commonMax+yPositionLine+0.6,'N.S.','FontSize',textFontSize+2,'FontWeight','bold');
+        text(mean(xPos),commonMax+yPositionLine+0.6,['   (' num2str(round(p,2)) ')'],'FontSize',textFontSize+2,'FontWeight','bold');
     end
 end
 end

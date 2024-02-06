@@ -1,16 +1,16 @@
 % Meditation Figure 2
 % Shows spontaneous gamma for EO1(combined), EC1(combined) and G1(Baseline)
 % ---------------------------------------------------------------------------------------
-clf
+% clf
 clear
 
 figure1 = figure('WindowState','maximized','Color',[1 1 1]);
 colormap(jet);
-displayInsetFlag = 0;
+displayInsetFlag = 1;
 
 fontsize = 12;
 comparisonStr = 'paired';
-customColorMapFag = 0;
+customColorMapFag =1;
 showLegend = 0;
 colormap jet
 
@@ -30,11 +30,11 @@ badElectrodeRejectionFlag = 1;
 stRange = [0.25 1.25]; % hard coded for now
 
 freqRangeList{1} = [8 13];  % alpha
-freqRangeList{2} = [25 40]; % modified slow-Gamma range
+freqRangeList{2} = [20 40]; % modified slow-Gamma range
 freqRangeList{3} = [41 65]; % modified fast-Gamma range
 
 axisRangeList{1} = [5 80];    axisRangeName{1} = 'Freq Lims (Hz)';
-axisRangeList{2} = [-2.5 2.5]; axisRangeName{2} = 'YLims';
+axisRangeList{2} = [-2.5 3]; axisRangeName{2} = 'YLims';
 axisRangeList{3} = [-1.5 1.5]; axisRangeName{3} = 'cLims (topo)';
 
 cutoffList = [3 30];
@@ -54,11 +54,13 @@ end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Make Plots %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-hAllPlots = getPlotHandles(2,3,[0.12 0.1 0.65 0.8],0.05);
-hTopo     = getPlotHandles(4,1,[0.85 0.1 0.1 0.8],0.05,0.06);
+hrawPSD = getPlotHandles(2,2,[0.14 0.12 0.36 0.8],0.02,0.05);
+hdeltaPSD = getPlotHandles(2,1,[0.60 0.12 0.18 0.8],0.05);
+hAllPlots = [hrawPSD hdeltaPSD];
+hTopo     = getPlotHandles(4,1,[0.85 0.12 0.1 0.8],0.05,0.06);
 
-annotation('textbox',[.12 .65 .1 .2], 'String','Occipital','EdgeColor','none','FontWeight','bold','FontSize',18,'Rotation',90);
-annotation('textbox',[.12 .18 .1 .2], 'String','Fronto-Central','EdgeColor','none','FontWeight','bold','FontSize',18,'Rotation',90);
+annotation('textbox',[.14 .65 .1 .2], 'String','Occipital','EdgeColor','none','FontWeight','bold','FontSize',20,'Rotation',90);
+annotation('textbox',[.14 .18 .1 .2], 'String','Fronto-Central','EdgeColor','none','FontWeight','bold','FontSize',20,'Rotation',90);
 
 xlabel(hAllPlots(2,1),'Frequency(Hz)','FontWeight','bold','FontSize',15);
 ylabel(hAllPlots(2,1),'Power (log_{10}(\muV^2))','FontWeight','bold','FontSize',15);
@@ -131,7 +133,8 @@ for g=1:length(groupPos)
             switch i
                 case 4 % M1 combined
                     p=4; % EO1
-                    hPSD = hAllPlots(g,1);                    
+                    hPSD = hAllPlots(g,1);
+
                     showOnlyLineFlag = 1;
                     lineStyle = '--';
                     displayAndcompareData(hPSD,logPSDData{g,p},freqVals,displaySettings,yLimsPSD,0,useMedianFlag,~pairedDataFlag,showOnlyLineFlag,lineStyle);
@@ -145,10 +148,12 @@ for g=1:length(groupPos)
             %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         else
             hPSD = hAllPlots(g,i);
+            xticklabels(hPSD,'auto');
+            yticklabels(hPSD,'auto');
             hPos =  get(hPSD,'Position');
             hold(hPSD,'on');
-            rectangle('Position',[24,-2.5,16,5],'FaceColor',[0.6758    0.8438    0.8984],'EdgeColor','none','LineWidth',0.001,'Parent',hPSD);
-                
+            rectangle('Position',[24,-2.4,16,5],'FaceColor',[  0.85    1.0000    1.0000],'EdgeColor','none','LineWidth',0.001,'Parent',hPSD);
+
             displayAndcompareData(hPSD,logPSDData{g,i},freqVals,displaySettings,yLimsPSD,1,useMedianFlag,~pairedDataFlag);
             xlim(hPSD,freqLims);
 
@@ -167,30 +172,6 @@ for g=1:length(groupPos)
                 end
             end
 
-            %%%%%%%%%%%%%%%%%% Plot Violin PLots %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-            if displayInsetFlag
-                hInset = axes('position', [hPos(1)+0.02 hPos(2)+0.032   0.0544    0.0727]);
-                displaySettings.plotAxes = hInset;
-                if ~useMedianFlag
-                    displaySettings.parametricTest = 1;
-                else
-                    displaySettings.parametricTest = 0;
-                end
-
-                if g==2 &&  i==1
-                    displaySettings.showYTicks=1;
-                    displaySettings.showXTicks=1;
-                    ylabel(hInset,'Power','FontSize',10);
-                else
-                    displaySettings.showYTicks=0;
-                    displaySettings.showXTicks=0;
-
-                end
-                displaySettings.setYLim=[-1 2.3];
-                displaySettings.commonYLim = 1;
-                displaySettings.xPositionText =0.8;
-                ax=displayViolinPlot(logPower{g,i},[{displaySettings.colorNames(1,:)} {displaySettings.colorNames(2,:)}],1,1,1,pairedDataFlag,displaySettings);
-            end
 
             %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -214,14 +195,8 @@ for g=1:length(groupPos)
                             ach.Label.String = '\Delta Power (dB)';
                         end
 
-                        if s==1
-                            [electrodeGroupList,groupNameList] = getElectrodeGroups(gridType,capType);
-                            numGroups = length(electrodeGroupList);
-                            % for n=1:numGroups
-                            %     showElecIDs = electrodeGroupList{n};
-                            %     topoplot_murty([],montageChanlocs,'electrodes','on','style','blank','drawaxis','off','nosedir','+X','emarkercolors',x,'plotchans',showElecIDs,'plotrad',0.65,'headrad',0.6,'emarker',{'.',colorList(n,:),14,1},'plotrad',0.6,'headrad',0.6);
-                            % end
-                        end
+                        %                         showElecIDs = 1:64; % show all electrodes
+                        %                         topoplot_murty([],montageChanlocs,'electrodes','on','style','blank','drawaxis','off','nosedir','+X','emarkercolors',x,'plotchans',showElecIDs,'plotrad',0.65,'headrad',0.6,'emarker',{'.',[0 0 0],8,1},'plotrad',0.6,'headrad',0.6);
                         axesTopolot=axesTopolot+1;
                     end
 
@@ -232,8 +207,38 @@ for g=1:length(groupPos)
     end
 end
 
+%%%%%%%%%%%%%%%%%% Plot Violin PLots %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+if displayInsetFlag
+    for g=1:length(groupPos)
+        for i=1:3
+            hPSD = hAllPlots(g,i);
+            hPos =  get(hPSD,'Position');
+            hInset = axes('position', [hPos(1)+0.119 hPos(2)+0.25  0.0563    0.1114]);
+            displaySettings.plotAxes = hInset;
+            if ~useMedianFlag
+                displaySettings.parametricTest = 1;
+            else
+                displaySettings.parametricTest = 0;
+            end
 
-% Label the plots
+            if g==2 &&  i==1
+                displaySettings.showYTicks=1;
+                displaySettings.showXTicks=1;
+                ylabel(hInset,'Power','FontSize',10);
+            end
+
+            displaySettings.setYLim=[-1 2.3];
+            displaySettings.commonYLim = 0;
+            displaySettings.xPositionText =0.8;
+            displaySettings.yPositionLine=0.05;
+            ax=displayViolinPlot(logPower{g,i},[{displaySettings.colorNames(1,:)} {displaySettings.colorNames(2,:)}],1,1,1,pairedDataFlag,displaySettings);
+        end
+    end
+end
+
+%%%%%%%%%%%%%%%%%% Plot Violin PLots End %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%% Label plot  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 numRowPSD=2;
 numColumnPSD =3;
 titlePSDArrays = {'M2 (Spontaneous)','M2 (Stimulus)','Change in Power'};
@@ -252,19 +257,19 @@ for i=1:numRowPSD
             xticklabels(hAllPlots(i,j),[]);
             title(hAllPlots(i,j),titlePSDArrays{j},'FontWeight','bold','FontSize',18);
         end
-        if j>1
+        if j==2
             yticklabels(hAllPlots(i,j),[]);
         end
     end
 end
-
+%%%%%%%%%%%%%%%%%% Label plot end  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %---------------------------------------------------
-annotation(gcf,'textbox',[0.9310 0.5977 0.0196 0.2509],'String','Spontaneous','Rotation',90,'FontWeight','bold','FontSize',18,'FitBoxToText','off',...
+annotation(gcf,'textbox',[0.9310 0.5977 0.0196 0.2509],'String','Spontaneous','Rotation',90,'FontWeight','bold','FontSize',20,'FitBoxToText','off',...
     'EdgeColor','none');
 
 % Create textbox
-annotation(gcf,'textbox',[0.9297 0.2068 0.0196 0.2509],'String','Stim-Induced','Rotation',90,'FontWeight','bold','FontSize',18,'FitBoxToText','off',...
+annotation(gcf,'textbox',[0.9297 0.2068 0.0196 0.2509],'String','Stim-Induced','Rotation',90,'FontWeight','bold','FontSize',20,'FitBoxToText','off',...
     'EdgeColor','none');
 
 
@@ -283,8 +288,12 @@ set(findobj(gcf,'type','axes'),'box','off'...
     );
 
 % custom colomap
-if customColorMapFag
-    % red-white-blue
-    mycolormap = customcolormap(linspace(0,1,11), {'#68011d','#b5172f','#d75f4e','#f7a580','#fedbc9','#f5f9f3','#d5e2f0','#93c5dc','#4295c1','#2265ad','#062e61'});
-    colormap(mycolormap);
-end
+% if customColorMapFag
+%     % red-white-blue
+%         mycolormap = customcolormap(linspace(0,1,11), {'#68011d','#b5172f','#d75f4e','#f7a580','#fedbc9','#f5f9f3','#d5e2f0','#93c5dc','#4295c1','#2265ad','#062e61'});
+%         colormap(mycolormap);
+%
+%     mycolormap = customcolormap([0 .25 .5 .75 1], {'#f645db','#f66e45','#ffffbb','#65c0ae','#5e4f9f'});
+%     % colorbar('southoutside');
+%     colormap(mycolormap);
+% end

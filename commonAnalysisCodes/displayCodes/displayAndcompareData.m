@@ -18,7 +18,7 @@ end
 
 numGroups = length(data);
 
-% axes(hPlot);
+axes(hPlot);
 for i=1:numGroups
     clear bootStat mData sData
     mData = getLoc(data{i});
@@ -30,7 +30,7 @@ for i=1:numGroups
     end
 
     if showOnlyLineFlag
-        plot(hPlot,xs,mData,'color',displaySettings.colorNames(i,:),'linewidth',2,'lineStyle',lineStyle);
+        plot(xs,mData,'color',displaySettings.colorNames(i,:),'linewidth',2,'lineStyle',lineStyle);
     else
         if xscaleLogFlag
             if i==1 
@@ -38,18 +38,18 @@ for i=1:numGroups
             end
             mData=mData(2:end);
             sData=sData(2:end);
-            plot(hPlot,xs,mData,'color',displaySettings.colorNames(i,:),'linewidth',2);
-            patch(hPlot,[xs';flipud(xs')],[mData'-sData';flipud(mData'+sData')],displaySettings.colorNames(i,:),'linestyle','none','FaceAlpha',0.4,'Parent',hPlot);
+            plot(xs,mData,'color',displaySettings.colorNames(i,:),'linewidth',2);
+            patch([xs';flipud(xs')],[mData'-sData';flipud(mData'+sData')],displaySettings.colorNames(i,:),'linestyle','none','FaceAlpha',0.4);
         else
-            plot(hPlot,xs,mData,'color',displaySettings.colorNames(i,:),'linewidth',2);
-            patch([xs';flipud(xs')],[mData'-sData';flipud(mData'+sData')],displaySettings.colorNames(i,:),'linestyle','none','FaceAlpha',0.4,'Parent',hPlot);
+            plot(xs,mData,'color',displaySettings.colorNames(i,:),'linewidth',2);
+            patch([xs';flipud(xs')],[mData'-sData';flipud(mData'+sData')],displaySettings.colorNames(i,:),'linestyle','none','FaceAlpha',0.4);
         end
     end
     hold on;
 end
 
-set(hPlot,'fontsize',displaySettings.fontSizeLarge);
-set(hPlot,'TickDir','out','TickLength',displaySettings.tickLengthMedium);
+set(gca,'fontsize',displaySettings.fontSizeLarge);
+set(gca,'TickDir','out','TickLength',displaySettings.tickLengthMedium);
 
 if exist('yLims','var') && ~isempty(yLims)
     ylim(yLims);
@@ -94,7 +94,7 @@ if displaySignificanceFlag % Do significance Testing
         clear xVals; xVals = [xBegPos xEndPos xEndPos xBegPos]';
 
         if (p<0.05)
-            patch(xVals,yVals,[0.8 0.8 0.8],'linestyle','none');
+            patch(xVals,yVals,[0.5 0.5 0.5],'linestyle','none');
         end
         if (p<0.01)
             patch(xVals,yVals,[0 0 0],'linestyle','none');

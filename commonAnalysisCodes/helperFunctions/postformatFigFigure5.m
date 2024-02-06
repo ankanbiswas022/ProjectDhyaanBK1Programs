@@ -3,8 +3,8 @@
 % destfolder = ['' num2str(floor(figno))]
 % destfilename = ['' num2str(floor(figno))]
 %%
-f;
-for i = numel(f.Children):-1:1
+f=gcf;
+for i = numel(f.Children):-1:7
     x = f.Children(i);
     if strcmp( x.Type, 'legend')
         set(x, 'FontSize', 12); set(x,'Linewidth',1);
@@ -12,6 +12,7 @@ for i = numel(f.Children):-1:1
         box off; set(x,'TickDir','out'); set(x,'TickLength',[0.02, 0.05]); set(x,'Linewidth',1); set(x,'FontSize',16);
     elseif strcmp(x.Type, 'polaraxes')
         box off; set(x,'TickDir','out'); set(x,'TickLength',get(x,'TickLength')); set(x,'Linewidth',1); set(x,'FontSize',16);
+   
     end
     for j = 1:numel(x.Children)
         y = x.Children(j);
@@ -23,12 +24,14 @@ for i = numel(f.Children):-1:1
                 set(y, 'LineWidth', 1.5);
             else
                 disp('higha')
-                set(y, 'MarkerSize', 18);
+                set(y, 'MarkerSize', 12);
             end
         elseif strcmp( y.Type, 'scatter') % for not using on the scatter
-%             if exist('sizeData','var')
-%                 set(y, 'SizeData', sizeData);
-%             end
+            %             if exist('sizeData','var')
+            %                 set(y, 'SizeData', sizeData);
+            %             end
+        elseif strcmp( x.Type, 'TextBox')
+            box off; set(x,'TickDir','out'); set(x,'TickLength',[0.02, 0.05]); set(x,'Linewidth',1); set(x,'FontSize',16);
         end
     end
 end
