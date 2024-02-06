@@ -15,7 +15,7 @@ if ~isfield(displaySettings,'showYTicks');        displaySettings.showYTicks=0; 
 if ~isfield(displaySettings,'setYLim');           displaySettings.setYLim=[-7 7];               end
 if ~isfield(displaySettings,'commonYLim');        displaySettings.commonYLim=0;                 end
 if ~isfield(displaySettings,'showXTicks');        displaySettings.showXTicks=1;                 end
-if ~isfield(displaySettings,'xTickLabels');       displaySettings.xTickLabels=[{'M'},{'C'}];    end
+if ~isfield(displaySettings,'xTickLabels');       displaySettings.xTickLabels=[{'Med'},{'Con'}];    end
 if ~isfield(displaySettings,'parametricTest');    displaySettings.parametricTest=0;             end
 if ~isfield(displaySettings,'tickLengthMedium');  displaySettings.tickLengthMedium=[0.025 0];   end
 
