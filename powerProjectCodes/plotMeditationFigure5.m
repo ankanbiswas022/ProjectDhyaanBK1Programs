@@ -16,7 +16,7 @@ colormap jet
 
 protocolNames  = [{'M2'}  {'M2'}  {'M2'} {'M1'} {'G2'}];
 refChoices     = [{'none'} {'none'} {'M2'}  {'none'} {'none'}] ;
-analysisChoice = {'bl','st','st','combined','bl'};
+analysisChoice = {'bl'      ,'st',   'st','combined','bl'};
 
 groupNames = {'Meditators','Controls'};
 colorList  = [rgb('RoyalBlue');rgb('DarkCyan')];
@@ -157,7 +157,7 @@ for g=1:length(groupPos)
             displayAndcompareData(hPSD,logPSDData{g,i},freqVals,displaySettings,yLimsPSD,1,useMedianFlag,~pairedDataFlag);
             xlim(hPSD,freqLims);
 
-            if ~strcmp(refChoices{1},'none')
+            if ~strcmp(refChoices{i},'none')
                 line([0 freqVals(end)],[0 0],'color','k','parent',hPSD);
             end
 

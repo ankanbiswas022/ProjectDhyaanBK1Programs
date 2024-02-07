@@ -3,7 +3,7 @@
 % destfolder = ['' num2str(floor(figno))]
 % destfilename = ['' num2str(floor(figno))]
 %%
-f;
+f=gcf;
 for i = numel(f.Children):-1:1
     x = f.Children(i);
     if strcmp( x.Type, 'legend')
@@ -23,7 +23,7 @@ for i = numel(f.Children):-1:1
                 set(y, 'LineWidth', 1.5);
             else
                 disp('higha')
-                set(y, 'MarkerSize', 18);
+                set(y, 'MarkerSize', 12);
             end
         elseif strcmp( y.Type, 'scatter') % for not using on the scatter
 %             if exist('sizeData','var')

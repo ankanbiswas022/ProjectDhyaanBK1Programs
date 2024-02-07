@@ -4,6 +4,7 @@
 clf
 clear
 saveFlag=0;
+displayInsetFlag = 1;
 
 % figH = figure('units','normalized','outerposition',[0 0 1 1]);
 
@@ -30,7 +31,7 @@ freqRangeList{1} = [8 13];  % alpha
 freqRangeList{2} = [20 34]; % modified slow-Gamma range
 freqRangeList{3} = [35 65]; % modified fast-Gamma range
 
-axisRangeList{1} = [0 60];    axisRangeName{1} = 'Freq Lims (Hz)';
+axisRangeList{1} = [5 80];    axisRangeName{1} = 'Freq Lims (Hz)';
 axisRangeList{2} = [-2.5 2.5]; axisRangeName{2} = 'YLims';
 % axisRangeList{3} = [-1.5 1.5]; axisRangeName{3} = 'cLims (topo)';
 axisRangeList{3} = [-2 2]; axisRangeName{3} = 'cLims (topo)';
@@ -58,18 +59,21 @@ hAllPlots = [];
 % hTopo     = getPlotHandles(2,2,[0.32 0.13 0.25 0.8],0.01,0.05);
 % hTF       = getPlotHandles(2,2,[0.63 0.13 0.3 0.8],0.01,0.05);
 
-hRawPSD   = getPlotHandles(2,2,[0.08 0.13 0.2 0.8],0.01,0.05);
-hPSDAll   = getPlotHandles(2,1,[0.32 0.13 0.1 0.8],0.05,0.05);
-hTopo     = getPlotHandles(2,2,[0.47 0.13 0.21 0.8],0.01,0.05);
-hTF       = getPlotHandles(2,2,[0.73 0.13 0.2 0.8],0.01,0.05);
+hRawPSD   = getPlotHandles(2,2,[0.08 0.13 0.25 0.8],0.01,0.05);
+hDeltaPSD = getPlotHandles(2,1,[0.42 0.13 0.12 0.8],0.05,0.05);
+hTopo0    = getPlotHandles(4,1,[0.58 0.13 0.11 0.8],0.01,0.05);
+hTF       = getPlotHandles(2,2,[0.74 0.13 0.2 0.8],0.01,0.05);
+
+hTopo= reshape(hTopo0,[2 2])';
+hAllPlots = [hDeltaPSD hRawPSD];
 
 % Label the plots
 
 annotation('textbox',[.106 .7 .1 .2], 'String','G1','EdgeColor','none','FontWeight','bold','FontSize',18,'Rotation',90);
 annotation('textbox',[.106 .24 .1 .2], 'String','G2','EdgeColor','none','FontWeight','bold','FontSize',18,'Rotation',90);
 
-xlabel(hPSDAll(2,1),'Frequency(Hz)','FontWeight','bold','FontSize',15);
-ylabel(hPSDAll(2,1),'\Delta Power (dB)','FontWeight','bold','FontSize',15);
+xlabel(hDeltaPSD(2,1),'Frequency(Hz)','FontWeight','bold','FontSize',15);
+ylabel(hDeltaPSD(2,1),'\Delta Power (dB)','FontWeight','bold','FontSize',15);
 
 xlabel(hTF(2,1),'Time(s)','FontWeight','bold','FontSize',15);
 ylabel(hTF(2,1),'Frequency(Hz)','FontWeight','bold','FontSize',15);
@@ -155,7 +159,7 @@ for g=1:length(groupPos)
             end
             rawPlotIndex= rawPlotIndex+1;
         else
-            hPSD = hPSDAll(i,g);
+            hPSD = hDeltaPSD(i,g);
             displayAndcompareData(hPSD,logPSDData{g,i},freqVals,displaySettings,yLimsPSD,1,useMedianFlag,~pairedDataFlag);
             xlim(hPSD,freqLims);
 
@@ -193,53 +197,6 @@ for g=1:length(groupPos)
                     ach.Label.String = '\Delta Power (dB)';
                 end
             end
-
-            %%%%%%%%%%%%%%%%%%%%%%%%%%%% Plot TF Plots %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-            freqRange = [24 34]; % Show this range
-            timeLims = [-0.5 1];
-            freqLimsTF = [0 80];
-            cLims = [-2 2];
-            load("meanTFDataProtocolWise.mat",'meanTFDataProtocolWise','tmpData');
-            diffTF = 1;
-            for p=1:2 %protocol
-                for t=1:2 %med/control
-                    axes(hTF(p,t));
-                    tfData = meanTFDataProtocolWise{t,p};
-
-                    logP = log10(tfData);
-                    baselinePower = mean(logP(tmpData.timeValsTF>=baselineRange(1) & tmpData.timeValsTF<=baselineRange(2),:));
-                    if diffTF
-                        pcolor(tmpData.timeValsTF,tmpData.freqValsTF,10*(logP'- repmat(baselinePower',1,length(tmpData.timeValsTF))));
-                    else
-                        pcolor(tmpData.timeValsTF,tmpData.freqValsTF,logP');
-                    end
-
-                    % Add labels
-                    shading('interp');
-                    yline([freqRange(1) freqRange(2)],'--k','LineWidth',2);
-                    %  line(timeLims,[freqRange(1) freqRange(1)],'color','k','LineStyle','--','LineWidth',2);
-                    %  line(timeLims,[freqRange(2) freqRange(2)],'color','k','LineStyle','--','LineWidth',2.5);
-
-                    axis(hTF(p,t),[timeLims freqLimsTF]);
-                    clim(hTF(p,t),cLims);
-
-                    % xticks and Yticks
-                    if p==2 && t==1
-                        xlabel(hTF(p,t),'Time(s)');
-                    else
-                        set(hTF(p,t),'Xticklabel',[]);
-                    end
-
-                    if p==2 && t==1
-                        ylabel(hTF(p,t),'Frequency (Hz)');
-
-                    else
-                        set(hTF(p,t),'Yticklabel',[]);
-                    end
-
-                end
-            end
         end
 
     end
@@ -248,6 +205,88 @@ end
 
 title(hTF(1,1),'Meditators');
 title(hTF(1,2),'Controls');
+
+%%%%%%%%%%%%%%%%%% Plot Violin PLots %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+if displayInsetFlag
+    for g=1:length(groupPos)
+        for i=1:6
+            hPSD = hAllPlots(i);
+            hPos =  get(hPSD,'Position');
+            hInset = axes('position', [hPos(1)+0.119 hPos(2)+0.25  0.0563    0.1114]);
+            displaySettings.plotAxes = hInset;
+            if ~useMedianFlag
+                displaySettings.parametricTest = 1;
+            else
+                displaySettings.parametricTest = 0;
+            end
+
+            if g==2 &&  i==1
+                displaySettings.showYTicks=1;
+                displaySettings.showXTicks=1;
+                ylabel(hInset,'Power','FontSize',10);
+            end
+
+            displaySettings.setYLim=[-1 2.3];
+            displaySettings.commonYLim = 0;
+            displaySettings.xPositionText =0.8;
+            displaySettings.yPositionLine=0.05;
+            ax=displayViolinPlot(logPower{g,i},[{displaySettings.colorNames(1,:)} {displaySettings.colorNames(2,:)}],1,1,1,pairedDataFlag,displaySettings);
+        end
+    end
+end
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%% Plot TF Plots %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+freqRange = [24 34]; % Show this range
+timeLims = [-0.5 1];
+freqLimsTF = [0 80];
+cLims = [-2 2];
+load("meanTFDataProtocolWise.mat",'meanTFDataProtocolWise','tmpData');
+diffTF = 1;
+for p=1:2 %protocol
+    for t=1:2 %med/control
+        axes(hTF(p,t));
+        tfData = meanTFDataProtocolWise{t,p};
+
+        logP = log10(tfData);
+        baselinePower = mean(logP(tmpData.timeValsTF>=baselineRange(1) & tmpData.timeValsTF<=baselineRange(2),:));
+        if diffTF
+            pcolor(tmpData.timeValsTF,tmpData.freqValsTF,10*(logP'- repmat(baselinePower',1,length(tmpData.timeValsTF))));
+        else
+            pcolor(tmpData.timeValsTF,tmpData.freqValsTF,logP');
+        end
+
+        % Add labels
+        shading('interp');
+        yline([freqRange(1) freqRange(2)],'--k','LineWidth',2);
+        %  line(timeLims,[freqRange(1) freqRange(1)],'color','k','LineStyle','--','LineWidth',2);
+        %  line(timeLims,[freqRange(2) freqRange(2)],'color','k','LineStyle','--','LineWidth',2.5);
+
+        axis(hTF(p,t),[timeLims freqLimsTF]);
+        clim(hTF(p,t),cLims);
+
+        % xticks and Yticks
+        if p==2 && t==1
+            xlabel(hTF(p,t),'Time(s)');
+        else
+            set(hTF(p,t),'Xticklabel',[]);
+        end
+
+        if p==2 && t==1
+            ylabel(hTF(p,t),'Frequency (Hz)');
+
+        else
+            set(hTF(p,t),'Yticklabel',[]);
+        end
+
+    end
+end
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%% Plot TF Plots(end) %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+%%%%%%%%%%%%%%%%%% Plot Violin PLots end %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 axes(hTF(2,2));
 hc = colorbar('Position', [0.94 0.1301 0.0109 0.3755]);
