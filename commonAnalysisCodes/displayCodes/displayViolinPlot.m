@@ -6,10 +6,10 @@ function ax=displayViolinPlot(dataArray,colorArray,showData,plotQuartiles,showSi
 if ~exist('displaySettings','var');               displaySettings=struct();                     end
 if ~isfield(displaySettings,'alpha');             displaySettings.alpha=0.3;                    end
 if ~isfield(displaySettings,'dataMarkerSize');    displaySettings.dataMarkerSize=12;            end
-if ~isfield(displaySettings,'medianMarkerSize');  displaySettings.medianMarkerSize=15;          end
+if ~isfield(displaySettings,'medianMarkerSize');  displaySettings.medianMarkerSize=20;          end
 if ~isfield(displaySettings,'textFontSize');      displaySettings.textFontSize=8;               end
 if ~isfield(displaySettings,'yPositionLine');     displaySettings.yPositionLine=0.5;            end
-if ~isfield(displaySettings,'xPositionText');     displaySettings.xPositionText=0.15;           end
+if ~isfield(displaySettings,'xPositionText');     displaySettings.xPositionText=0.5;              end
 if ~isfield(displaySettings,'plotAxes');          displaySettings.plotAxes=gca;                 end
 if ~isfield(displaySettings,'showYTicks');        displaySettings.showYTicks=0;                 end
 if ~isfield(displaySettings,'setYLim');           displaySettings.setYLim=[-7 7];               end
@@ -40,14 +40,13 @@ parametricTest   = displaySettings.parametricTest;
 axes(displaySettings.plotAxes);
 ax=gca;
 set(ax,'TickDir','out','TickLength',displaySettings.tickLengthMedium);
-if ~showYTicks && commonYLim
-    set(ax,'YTickLabel',[]);
-end
+% if ~showYTicks && commonYLim
+%     set(ax,'YTickLabel',[]);
+% end
 
 ax.XTick=[1 2];
 if showXTicks
     ax.XTickLabel = xTickLabels;
-%     ax.XTickLabelRotation = 45;
 else
     ax.XTickLabel = [];
 end
@@ -94,11 +93,12 @@ for pos=1:size(Y,2)
         hiwhisker = quartiles(3) + 1.5*IQR;
         hiwhisker = min(hiwhisker, max(data(data < hiwhisker)));
 
-        plot([pos pos], [lowhisker hiwhisker]);
-        patch(pos+[-1,1,1,-1]*BoxWidth, ...
+        patch(pos+[-1,1,1,-1]*(BoxWidth+0.005), ...
             [quartiles(1) quartiles(1) quartiles(3) quartiles(3)], ...
-            [0.5 0.5 0.5]);
-        scatter(pos, quartiles(2), medianMarkerSize+4, [0 0 0], 'filled');
+            [0 0 0]);
+        %([pos pos], [lowhisker hiwhisker]);
+        meanData(pos) = quartiles(2);
+       % scatter(pos, quartiles(2), medianMarkerSize, [0 0 0], 'filled');
     end
 end
 
@@ -110,6 +110,8 @@ if pairedDataFlag
     end
 end
 
+for pos=1:size(Y,2);    scatter(pos, meanData(pos), medianMarkerSize, [0 0 0], 'filled');   end
+    
 if showSignificance
     if pairedDataFlag
         if parametricTest
@@ -131,21 +133,33 @@ if showSignificance
     commonMax=max([max(Y{:,1}) max(Y{:,2})]);
     commonMin = min([max(Y{:,1}) min(Y{:,2})]);
     yPos = [commonMax+yPositionLine commonMax+yPositionLine];
-    plot(xPos,yPos,'-k');
+    %plot(xPos,yPos);
 
     if commonYLim
         set(ax,'YLim',setYLim);
         % set(ax,'YTickLabel',[]);
     else
-        set(ax,'YLim',[commonMin-yPositionLine*5 commonMax+yPositionLine*6]);
+        set(ax,'YLim',[commonMin-yPositionLine*2 commonMax+yPositionLine*6]);
     end
+
+     if p>0.05
+         text(mean(xPos)-xPositionText/2,setYLim(2)+yPositionLine,['N.S. (' num2str(round(p,3)) ')'],'FontSize',textFontSize,'FontWeight','bold');
+     elseif p>0.01
+         text(mean(xPos)-xPositionText/2,setYLim(2)+yPositionLine,['* (' num2str(round(p,3)) ')'],'FontSize',textFontSize,'FontWeight','bold');
+     elseif p>0.005
+          text(mean(xPos)-xPositionText/2,setYLim(2)+yPositionLine,['** (' num2str(round(p,3)) ')'],'FontSize',textFontSize,'FontWeight','bold');
+     else
+          text(mean(xPos)-xPositionText/2,setYLim(2)+yPositionLine,['*** (' num2str(round(p,3)) ')'],'FontSize',textFontSize,'FontWeight','bold');
+     end
     
-    if p<0.05
-        text(mean(xPos)-xPositionText/3,commonMax+yPositionLine+0.3,'*','FontSize',textFontSize+2,'FontWeight','bold');
-        text(mean(xPos)-xPositionText/5,commonMax+yPositionLine+0.3,[' (' num2str(round(p,4)) ')'],'FontSize',textFontSize+2,'FontWeight','bold');
-    else
-        text(mean(xPos)-xPositionText/3,commonMax+yPositionLine+0.6,'N.S.','FontSize',textFontSize+2,'FontWeight','bold');
-        text(mean(xPos),commonMax+yPositionLine+0.6,['   (' num2str(round(p,2)) ')'],'FontSize',textFontSize+2,'FontWeight','bold');
-    end
+%     if p<0.05
+%         text(mean(xPos)-xPositionText/4,commonMax+yPositionLine+0.3,'*','FontSize',textFontSize);
+%         text(mean(xPos)-xPositionText/5,commonMax+yPositionLine+0.3,[' (' num2str(round(p,3)) ')'],'FontSize',textFontSize);
+%     else
+%         text(mean(xPos)-xPositionText/2,commonMax+yPositionLine+0.3,'N.S.','FontSize',textFontSize);
+%         text(mean(xPos),commonMax+yPositionLine+0.3,[' (' num2str(round(p,2)) ')'],'FontSize',textFontSize);
+%     end
 end
+
+
 end

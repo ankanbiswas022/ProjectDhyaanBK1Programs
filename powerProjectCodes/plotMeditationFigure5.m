@@ -1,7 +1,7 @@
 % Meditation Figure 2
 % Shows spontaneous gamma for EO1(combined), EC1(combined) and G1(Baseline)
 % ---------------------------------------------------------------------------------------
-% clf
+
 clear
 
 figure1 = figure('WindowState','maximized','Color',[1 1 1]);
@@ -10,13 +10,13 @@ displayInsetFlag = 1;
 
 fontsize = 12;
 comparisonStr = 'paired';
-customColorMapFag =1;
+customColorMapFag =0;
 showLegend = 0;
 colormap jet
 
-protocolNames  = [{'M2'}  {'M2'}  {'M2'} {'M1'} {'G2'}];
-refChoices     = [{'none'} {'none'} {'M2'}  {'none'} {'none'}] ;
-analysisChoice = {'bl'      ,'st',   'st','combined','bl'};
+protocolNames  = [{'M2'}    {'M2'}    {'M2'}  {'M1'}     {'G2'}     {'M2'}  ];
+refChoices     = [{'none'}  {'none'}  {'M2'}  {'none'}   {'none'}   {'G2'} ] ;
+analysisChoice = [{'bl'      ,'st',     'st',  'combined',  'bl'}   {'bl'} ];
 
 groupNames = {'Meditators','Controls'};
 colorList  = [rgb('RoyalBlue');rgb('DarkCyan')];
@@ -30,7 +30,7 @@ badElectrodeRejectionFlag = 1;
 stRange = [0.25 1.25]; % hard coded for now
 
 freqRangeList{1} = [8 13];  % alpha
-freqRangeList{2} = [20 40]; % modified slow-Gamma range
+freqRangeList{2} = [24 34]; % modified slow-Gamma range
 freqRangeList{3} = [41 65]; % modified fast-Gamma range
 
 axisRangeList{1} = [5 80];    axisRangeName{1} = 'Freq Lims (Hz)';
@@ -134,7 +134,6 @@ for g=1:length(groupPos)
                 case 4 % M1 combined
                     p=4; % EO1
                     hPSD = hAllPlots(g,1);
-
                     showOnlyLineFlag = 1;
                     lineStyle = '--';
                     displayAndcompareData(hPSD,logPSDData{g,p},freqVals,displaySettings,yLimsPSD,0,useMedianFlag,~pairedDataFlag,showOnlyLineFlag,lineStyle);
@@ -173,41 +172,45 @@ for g=1:length(groupPos)
             end
 
 
-            %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-            %%%%%%%%%%%%%%%%%% Plot topoplot %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-            if i==1 || i==3
-                if plotTopoFlag
-                    if i==1
-                        axesTopolot = 1;
-                    else
-                        axesTopolot = 3;
-                    end
-                    for s=1:2 %  meditators  and control
-                        axes(hTopo(axesTopolot));
-                        title(groupNames{s});
-                        data = logTopoData{i,1}{s};                                                                                                                                                   data = logTopoData{i}{s};
-                        topoplot(data,montageChanlocs,'electrodes','on','maplimits',cLimsTopo,'plotrad',0.6,'headrad',0.6);
-                        if i==2 && s==1
-                            ach=colorbar;
-                            ach.Location='southoutside';
-                            ach.Position =  [ach.Position(1) ach.Position(2)-0.05 ach.Position(3) ach.Position(4)];
-                            ach.Label.String = '\Delta Power (dB)';
-                        end
-
-                        %                         showElecIDs = 1:64; % show all electrodes
-                        %                         topoplot_murty([],montageChanlocs,'electrodes','on','style','blank','drawaxis','off','nosedir','+X','emarkercolors',x,'plotchans',showElecIDs,'plotrad',0.65,'headrad',0.6,'emarker',{'.',[0 0 0],8,1},'plotrad',0.6,'headrad',0.6);
-                        axesTopolot=axesTopolot+1;
-                    end
-
-                end
-            end
-            %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         end
     end
 end
 
-%%%%%%%%%%%%%%%%%% Plot Violin PLots %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%% Plot topoplot %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+iList=[6 3];
+for i=iList
+    if plotTopoFlag
+        if i==6
+            axesTopolot = 1;
+        else
+            axesTopolot = 3;
+        end
+        for s=1:2 %  meditators  and control
+            axes(hTopo(axesTopolot));
+            title(groupNames{s},'FontWeight','bold','FontSize',14,'Color',displaySettings.colorNames(s,:));
+            data = logTopoData{i,1}{s};                                                                                                                                                   data = logTopoData{i}{s};
+            topoplot(data,montageChanlocs,'electrodes','on','maplimits',cLimsTopo,'plotrad',0.6,'headrad',0.6);
+            if i==2 && s==1
+                ach=colorbar;
+                ach.Location='southoutside';
+                ach.Position =  [ach.Position(1) ach.Position(2)-0.05 ach.Position(3) ach.Position(4)];
+                ach.Label.String = '\Delta Power (dB)';
+            end
+
+            %                         showElecIDs = 1:64; % show all electrodes
+            %                         topoplot_murty([],montageChanlocs,'electrodes','on','style','blank','drawaxis','off','nosedir','+X','emarkercolors',x,'plotchans',showElecIDs,'plotrad',0.65,'headrad',0.6,'emarker',{'.',[0 0 0],8,1},'plotrad',0.6,'headrad',0.6);
+            axesTopolot=axesTopolot+1;
+        end
+
+    end
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+%%%%%%%%%%%%%%%%%% Plot Violin PLots %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 if displayInsetFlag
     for g=1:length(groupPos)
         for i=1:3
