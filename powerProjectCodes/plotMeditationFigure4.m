@@ -1,17 +1,17 @@
 % Meditation Figure 2
 % Shows spontaneous gamma for EO1(combined), EC1(combined) and G1(Baseline)
 %% ------------Inital---------------------------------------------------------------------------
-clf
+% clf
 clear
 saveFlag=0;
 displayInsetFlag = 1;
-customColorMapFag = 0;
+customColorMapFag = 1;
 
 % figH = figure('units','normalized','outerposition',[0 0 1 1]);
 figH = figure('WindowState','maximized','Color',[1 1 1]);
 
 colormap jet
-fontsize = 12;
+fontsize = 14;
 comparisonStr = 'paired';
 
 protocolNames  = [ {'G1'}  {'G2'}   {'G1'}    {'G2'}   {'G1'}  {'G2'}   {'EO1'}];
@@ -58,10 +58,10 @@ hAllPlots = [];
 % hTopo     = getPlotHandles(2,2,[0.32 0.13 0.25 0.8],0.01,0.05);
 % hTF       = getPlotHandles(2,2,[0.63 0.13 0.3 0.8],0.01,0.05);
 
-hRawPSD   = getPlotHandles(2,2,[0.09 0.13 0.28 0.8],0.01,0.05);
-hDeltaPSD = getPlotHandles(2,1,[0.42 0.13 0.14 0.8],0.05,0.05);
-hTopo0    = getPlotHandles(4,1,[0.58 0.13 0.11 0.8],0.01,0.05);
-hTF       = getPlotHandles(2,2,[0.73 0.13 0.2 0.8],0.02,0.05);
+hRawPSD   = getPlotHandles(2,2,[0.09 0.13 0.28 0.8],0.03,0.07);
+hDeltaPSD = getPlotHandles(2,1,[0.42 0.13 0.14 0.8],0.05,0.07);
+hTopo0    = getPlotHandles(4,1,[0.582 0.16 0.11 0.767],0.03,0.07);
+hTF       = getPlotHandles(2,2,[0.73 0.13 0.2 0.8], 0.02,0.07);
 
 hTopo= reshape(hTopo0,[2 2])';
 hAllPlots = [hDeltaPSD hRawPSD];
@@ -119,18 +119,18 @@ displaySettings.tickLengthMedium = [0.025 0];
 % Cyan and Blue (CMYK)
 if customColorMapFag
     %     displaySettings.colorNames(1,:) = [ 0.5000         0    0.5000];
-    displaySettings.colorNames(1,:) = [ 0.5000         0    0.5000];
-    displaySettings.colorNames(2,:) = [ 0.2539    0.4102    0.8789];
-    displaySettings.colorNames(3,:)  = rgb('Brown');
-    displaySettings.colorNames(4,:)  = rgb('DarkGreen');
-    displaySettings.colorNames(5,:) = [ 0.5000         0    0.5000];
-    displaySettings.colorNames(6,:) = [ 0.2539    0.4102    0.8789];
+     displaySettings.colorNames(1,:)    = [0.8 0 0.8];
+    displaySettings.colorNames(2,:)     = [0.25 0.41 0.88];
+    displaySettings.colorNames(3,:)     = rgb('Purple');
+    displaySettings.colorNames(4,:)     = rgb('Blue');
+    displaySettings.colorNames(5,:)     = [0.8 0 0.8];
+    displaySettings.colorNames(6,:)     = [0.25 0.41 0.88];
 else
     % RGB Color scheme
     displaySettings.colorNames(1,:) = [ 1 0 0];
     displaySettings.colorNames(2,:) = [ 0 1 0];
-    displaySettings.colorNames(3,:)  = rgb('Brown');
-    displaySettings.colorNames(4,:)  = rgb('DarkGreen');
+    displaySettings.colorNames(3,:) = rgb('Brown');
+    displaySettings.colorNames(4,:) = rgb('DarkGreen');
 
     displaySettings.colorNames(5,:) = [ 1 0 0];
     displaySettings.colorNames(6,:) = [ 0 1 0];
@@ -192,7 +192,7 @@ for g=1:length(groupPos)
             yticks(hPSD,yLimsPSD(1):1:yLimsPSD0(end));
 
             % if g==1 && i==2
-            %     %             legend('','Meditators','','Controls','FontWeight','bold','FontSize',12);
+            %     %             legend('','Meditators','','Controls','FontWeight','bold','FontSize',14);
             %     %             legend('boxoff')
             %     text(60,1.7-0.5,'Meditators(29)','FontSize',fontsize+3,'FontWeight','bold','Color','red');
             %     text(60,1.7,'Controls(29)','FontSize',fontsize+3,'FontWeight','bold','Color','green');
@@ -210,11 +210,12 @@ for g=1:length(groupPos)
                 if i==2 && s==2
                     ach=colorbar;
                     ach.Location='southoutside';
-                    ach.Position =  [ach.Position(1)-0.02 ach.Position(2)-0.09 ach.Position(3)+0.04 0.02];
+                    ach.Position = [0.6087 0.1248 0.0525 0.0160];
                     ach.Label.String = 'Change in power (dB)';
                     ach.Label.FontWeight = "bold";
-                    ach.Label.FontSize = 14;
+                    ach.Label.FontSize = 16;
                     ach.Label.Color = [0 0 0];
+                    ach.FontSize = 16;                  
                 end
             end
         end
@@ -231,6 +232,7 @@ if displayInsetFlag
     for g=1:length(groupPos)
         for i=1:6
             hPSD = hAllPlots(i);
+            set(hPSD,'FontSize',14);
             hPos =  get(hPSD,'Position');
             if i>2
                 displaySettings.setYLim=[-0.5 1.35];
@@ -239,34 +241,39 @@ if displayInsetFlag
                         xticklabels(hPSD,[]);
                         title(hAllPlots(i),titlePSDArrays{1},'FontWeight','bold','FontSize',18);
                     elseif i==4
-                        xlabel(hPSD,'Frequency (Hz)','FontSize',14);
+                        xlabel(hPSD,'Frequency (Hz)','FontSize',16);
                     end
-                    makeShadedRegion(hPSD,freqRangeList{3},[-2 1],[rgb('Cyan')],0.2);
-                    ylabel(hPSD,'Power (log_{10}(\muV^2))','FontSize',14);
+                    makeShadedRegion(hPSD,freqRangeList{3},[-2 1],[rgb('Cyan')],0.1);
+                    ylabel(hPSD,'Power (log_{10}(\muV^2))','FontSize',16);
                 elseif i==5 || i==6
+                    yticklabels(hPSD,[]);
                     if i==5
-                        yticklabels(hPSD,[]);
+                        xticklabels(hPSD,[]);                         
                         title(hAllPlots(i),titlePSDArrays{2},'FontWeight','bold','FontSize',18);
                     elseif i==6
-                        xlabel(hPSD,'Frequency (Hz)','FontSize',14);
-                        title(hAllPlots(i),titlePSDArrays{j},'FontWeight','bold','FontSize',18);
+                        xlabel(hPSD,'Frequency (Hz)','FontSize',16);
                     end
-                    makeShadedRegion(hPSD,freqRangeList{2},[-2 1],[rgb('Cyan')],0.2);
+                    makeShadedRegion(hPSD,freqRangeList{2},[-2 1],[rgb('MistyRose')],1);
                 end
-                hInset = axes('position', [hPos(1)+0.08 hPos(2)+0.24  0.0563  0.1114]);
+                if i==3 || i==4
+                    hInset = axes('position', [hPos(1)+0.0413 hPos(2)+0.238  0.0563  0.1114]);
+                else
+                    hInset = axes('position', [hPos(1)+0.07 hPos(2)+0.238  0.0563  0.1114]);
+                end
+               
             else
                 displaySettings.setYLim=[-1 4.6];
                 ylim(hPSD,[-2.5 2.5]);
-                makeShadedRegion(hPSD,freqRangeList{2},[-2.5 2.5],[rgb('Cyan')],0.2);
-                ylabel(hPSD,'Change in power (dB)','FontSize',14,'FontWeight','bold');
+                makeShadedRegion(hPSD,freqRangeList{2},[-2.5 2.5],[rgb('MistyRose')],1);
+                ylabel(hPSD,'Change in power (dB)','FontSize',16,'FontWeight','bold');
 
                 if i==1
                     xticklabels(hPSD,[]);
                     title(hAllPlots(i),titlePSDArrays{3},'FontWeight','bold','FontSize',18);
                 elseif i==2
-                    xlabel(hPSD,'Frequency (Hz)','FontSize',14,'FontWeight','bold');
+                    xlabel(hPSD,'Frequency (Hz)','FontSize',16,'FontWeight','bold');
                 end
-                hInset = axes('position', [hPos(1)+0.0846 hPos(2)+0.285  0.0563  0.1114]);
+                hInset = axes('position', [hPos(1)+0.0781 hPos(2)+0.0416  0.0563  0.1114]);
             end
 
             displaySettings.plotAxes = hInset;
@@ -278,7 +285,7 @@ if displayInsetFlag
 
             displaySettings.showYTicks=1;
             displaySettings.showXTicks=1;
-            ylabel(hInset,'Power','FontSize',12);
+            ylabel(hInset,'Power','FontSize',14);
 
             displaySettings.commonYLim = 0;
             displaySettings.xPositionText =0.8;
@@ -293,7 +300,7 @@ end
 
 %% %%%%%%%%%%%%%%%%%%%%%%%%%% Plot TF Plots %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-freqRange  = [24 34]; % Show this range
+freqRange  = freqRangeList{2}; % Show this range
 timeLims   = [-0.5 1];
 freqLimsTF = [0 80];
 cLims      = axisRangeList{3};
@@ -323,59 +330,89 @@ for p=1:2 %protocol
 
         % xticks and Yticks
         if p==2
-            xlabel(hTF(p,t),'Time(s)','FontSize',14,'FontWeight','bold');
+            xlabel(hTF(p,t),'Time(s)','FontSize',16,'FontWeight','bold');
         else
-            set(hTF(p,t),'Xticklabel',[],'FontSize',12);
+            set(hTF(p,t),'Xticklabel',[],'FontSize',14);
         end
 
         if t==1
-            ylabel(hTF(p,t),'Frequency (Hz)','FontSize',14,'FontWeight','bold');
+            ylabel(hTF(p,t),'Frequency (Hz)','FontSize',16,'FontWeight','bold');
         else
-            set(hTF(p,t),'Yticklabel',[],'FontSize',12);
+            set(hTF(p,t),'Yticklabel',[],'FontSize',14);
         end
 
         if p==2 && t==1
-            set(hTF(p,t),'Yticklabel',[],'FontSize',12);
+            set(hTF(p,t),'FontSize',14);
         end
 
     end
 end
 
+axes(hTF(2,2));
+hc = colorbar('Position', [0.94 0.1301 0.0109 0.36]);
+hc.FontSize         = 14;
+hc.Label.FontSize   = 16;
+hc.Label.FontWeight = 'bold';
+hc.Label.String = ['Change in power' ' (dB)'];
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%% Plot TF Plots(end) %%%%%%%%%%%%%%%%%%%%%%%%
 
 
 
-axes(hTF(2,2));
-hc = colorbar('Position', [0.94 0.1301 0.0109 0.3755]);
-hc.FontSize         = 12;
-hc.Label.FontSize   = 14;
-hc.Label.FontWeight = 'bold';
-hc.Label.String = ['Change in power' ' (dB)'];
+
 
 
 %% %%% Labelling %%%%%%
-% xlabel(hDeltaPSD(2,1),'Frequency(Hz)','FontWeight','bold','FontSize',15);
-% ylabel(hDeltaPSD(2,1),'Change in power Power (dB)','FontWeight','bold','FontSize',15);
-%
-% xlabel(hTF(2,1),'Time(s)','FontWeight','bold','FontSize',15);
-% ylabel(hTF(2,1),'Frequency(Hz)','FontWeight','bold','FontSize',15);
-%
-% title(hTF(1,1),'Meditators');
-% title(hTF(1,2),'Controls');
-%
-title(hTopo(1,1),'Meditators','FontWeight','bold','FontSize',14,'Color',displaySettings.colorNames(1,:));
-title(hTopo(1,2),'Controls','FontWeight','bold','FontSize',14,'Color',displaySettings.colorNames(2,:));
 
-title(hTopo(2,1),'Meditators','FontWeight','bold','FontSize',14,'Color',displaySettings.colorNames(1,:));
-title(hTopo(2,2),'Controls','FontWeight','bold','FontSize',14,'Color',displaySettings.colorNames(2,:));
+title(hTopo(1,1),'Meditators','FontWeight','bold','FontSize',18,'Color',displaySettings.colorNames(1,:));
+title(hTopo(1,2),'Controls','FontWeight','bold','FontSize',18,'Color',displaySettings.colorNames(2,:));
 
-title(hTF(1,1),'Meditators','FontWeight','bold','FontSize',14,'Color',displaySettings.colorNames(1,:));
-title(hTF(1,2),'Controls','FontWeight','bold','FontSize',14,'Color',displaySettings.colorNames(2,:));
+title(hTopo(2,1),'Meditators','FontWeight','bold','FontSize',18,'Color',displaySettings.colorNames(1,:));
+title(hTopo(2,2),'Controls','FontWeight','bold','FontSize',18,'Color',displaySettings.colorNames(2,:));
+
+title(hTF(1,1),'Meditators','FontWeight','bold','FontSize',18,'Color',displaySettings.colorNames(1,:));
+title(hTF(1,2),'Controls','FontWeight','bold','FontSize',18,'Color',displaySettings.colorNames(2,:));
+
+if customColorMapFag
+    mycolormap = customcolormap([0 .25 .5 .75 1], {'#9d0142','#f66e45','#ffffbb','#65c0ae','#5e4f9f'});
+    colormap(mycolormap);
+end
 
 
 %% % Figure post-format %%%%%%%%%%%
 %    And savings
+annotation(gcf,'textbox',[0.1675 0.662042875157629 0.0812499999999999 0.0393530895334175],'Color',[0.501960784313725 0 0.501960784313725],...
+    'String','-- Med (EO1)',...
+    'LineStyle','none',...
+    'FontWeight','bold',...
+    'FontSize',14,...
+    'FitBoxToText','off');
+
+annotation(gcf,'textbox',[0.1675 0.69735182849937 0.0975000000000001 0.0380920554854982],'Color',[0 0 1],'String','-- Con (EO1)',...
+    'LineStyle','none',...
+    'FontWeight','bold',...
+    'FontSize',14,...
+    'FitBoxToText','off');
+
+annotation(gcf,'textbox',[0.17625 0.730138713745271 0.07375 0.0380920554854981],'Color',[0.768627450980392 0.0862745098039216 0.941176470588235],...
+    'String',{'Meditators'},...
+    'LineStyle','none',...
+    'FontWeight','bold',...
+    'FontSize',14,...
+    'FitBoxToText','off');
+
+annotation(gcf,'textbox',[0.18625 0.761664564943254 0.07375 0.0380920554854982],'Color',[0.250980392156863 0.411764705882353 0.87843137254902],...
+    'String','Controls',...
+    'LineStyle','none',...
+    'FontWeight','bold',...
+    'FontSize',14,...
+    'FitBoxToText','off');
+
+%%%%%%%%%%%%%% Occipital 
+annotation(gcf,'textbox',[0.03125 0.455494326511818 0.0840624976810069 0.0517023947996571],'String',{'Occipital'},'Rotation',90,'LineStyle','none',...
+    'FontWeight','bold',...
+    'FontSize',22,...
+    'FitBoxToText','off');
 
 % common change across figure!
 set(gcf,'color','w');

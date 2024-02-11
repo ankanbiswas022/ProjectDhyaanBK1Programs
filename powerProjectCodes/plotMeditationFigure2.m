@@ -24,8 +24,9 @@ colorList = [rgb('Aqua');rgb('Orange')];
 
 if customColorMapFag
     % Cyan and Blue (CMYK)
+%     displaySettings.colorNames(1,:)     = [0.7 0 0.7];
     displaySettings.colorNames(1,:)     = [0.7 0 0.7];
-    displaySettings.colorNames(2,:)     = rgb('DodgerBlue');
+    displaySettings.colorNames(2,:)     = [0 0.7 0.7];
     displaySettings.colorNames(3,:) = [ 0.5000    0      0.5000];
     displaySettings.colorNames(4,:) = [ 0.2539    0.4102    0.8789];
 else

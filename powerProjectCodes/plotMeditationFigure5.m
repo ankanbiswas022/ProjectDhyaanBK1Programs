@@ -19,7 +19,8 @@ refChoices     = [{'none'}  {'none'}  {'M2'}  {'none'}   {'none'}   {'G2'} ] ;
 analysisChoice = [{'bl'      ,'st',     'st',  'combined',  'bl'}   {'bl'} ];
 
 groupNames = {'Meditators','Controls'};
-colorList  = [rgb('RoyalBlue');rgb('DarkCyan')];
+% colorList  = [rgb('RoyalBlue');rgb('DarkCyan')];
+colorList = [rgb('Aqua');rgb('Orange')];
 
 plotTopoFlag = 1;
 
@@ -34,7 +35,7 @@ freqRangeList{2} = [24 34]; % modified slow-Gamma range
 freqRangeList{3} = [41 65]; % modified fast-Gamma range
 
 axisRangeList{1} = [5 80];    axisRangeName{1} = 'Freq Lims (Hz)';
-axisRangeList{2} = [-2.5 3]; axisRangeName{2} = 'YLims';
+axisRangeList{2} = [-2 2]; axisRangeName{2} = 'YLims';
 axisRangeList{3} = [-1.5 1.5]; axisRangeName{3} = 'cLims (topo)';
 
 cutoffList = [3 30];
@@ -59,8 +60,8 @@ hdeltaPSD = getPlotHandles(2,1,[0.60 0.12 0.18 0.8],0.05);
 hAllPlots = [hrawPSD hdeltaPSD];
 hTopo     = getPlotHandles(4,1,[0.85 0.12 0.1 0.8],0.05,0.06);
 
-annotation('textbox',[.14 .65 .1 .2], 'String','Occipital','EdgeColor','none','FontWeight','bold','FontSize',20,'Rotation',90);
-annotation('textbox',[.14 .18 .1 .2], 'String','Fronto-Central','EdgeColor','none','FontWeight','bold','FontSize',20,'Rotation',90);
+annotation('textbox',[.14 .65 .1 .2], 'String','Occipital','EdgeColor','none','FontWeight','bold','FontSize',20,'Rotation',90,'Color',colorList(1,:));
+annotation('textbox',[.14 .18 .1 .2], 'String','Fronto-Central','EdgeColor','none','FontWeight','bold','FontSize',20,'Rotation',90,'Color',colorList(2,:));
 
 xlabel(hAllPlots(2,1),'Frequency(Hz)','FontWeight','bold','FontSize',15);
 ylabel(hAllPlots(2,1),'Power (log_{10}(\muV^2))','FontWeight','bold','FontSize',15);
@@ -151,7 +152,12 @@ for g=1:length(groupPos)
             yticklabels(hPSD,'auto');
             hPos =  get(hPSD,'Position');
             hold(hPSD,'on');
-            rectangle('Position',[24,-2.4,16,5],'FaceColor',[  0.85    1.0000    1.0000],'EdgeColor','none','LineWidth',0.001,'Parent',hPSD);
+
+            if i==1
+                makeShadedRegion(hPSD,freqRangeList{3},[-2 2],[rgb('Cyan')],0.1);
+            else
+                makeShadedRegion(hPSD,freqRangeList{2},[-2 2],[rgb('MistyRose')],1);
+            end
 
             displayAndcompareData(hPSD,logPSDData{g,i},freqVals,displaySettings,yLimsPSD,1,useMedianFlag,~pairedDataFlag);
             xlim(hPSD,freqLims);
@@ -278,6 +284,11 @@ annotation(gcf,'textbox',[0.9297 0.2068 0.0196 0.2509],'String','Stim-Induced','
 
 %---------------------------------------------------
 
+if customColorMapFag
+    mycolormap = customcolormap([0 .25 .5 .75 1], {'#9d0142','#f66e45','#ffffbb','#65c0ae','#5e4f9f'});
+    colormap(mycolormap);
+end
+
 % common change across figure!
 set(gcf,'color','w');
 set(findobj(gcf,'type','axes'),'box','off'...
@@ -290,13 +301,3 @@ set(findobj(gcf,'type','axes'),'box','off'...
     ,'ycolor',[0 0 0]...
     );
 
-% custom colomap
-% if customColorMapFag
-%     % red-white-blue
-%         mycolormap = customcolormap(linspace(0,1,11), {'#68011d','#b5172f','#d75f4e','#f7a580','#fedbc9','#f5f9f3','#d5e2f0','#93c5dc','#4295c1','#2265ad','#062e61'});
-%         colormap(mycolormap);
-%
-%     mycolormap = customcolormap([0 .25 .5 .75 1], {'#f645db','#f66e45','#ffffbb','#65c0ae','#5e4f9f'});
-%     % colorbar('southoutside');
-%     colormap(mycolormap);
-% end
