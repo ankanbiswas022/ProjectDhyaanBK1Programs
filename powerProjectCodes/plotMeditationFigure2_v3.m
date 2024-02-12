@@ -65,7 +65,7 @@ end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Make Plots %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 hPSDPlots = getPlotHandles(2,3,[0.08 0.46 0.72 0.49],0.03,0.04);
-hTopo = getPlotHandles(3,1,[0.82 0.11 0.15 0.82],0.01,0.1);
+hTopo = getPlotHandles(3,1,[0.82 0.11 0.15 0.8],0.01,0.07);
 % hTopoSlope = getPlotHandles(1,3,[0.08 0.088 0.63 0.23],0.1625);
 % hBarSlope = getPlotHandles(1,3,[0.21 0.053 0.61 0.23],0.175);
 
@@ -189,15 +189,15 @@ for g=1:length(groupPos)
                         data = -diff(squeeze(comparisonData(:,:)));
                         axes(hTopo(s));
                         topoplot(data,montageChanlocs,'electrodes','on','maplimits',cLimsTopo,'plotrad',0.6,'headrad',0.6,'style',styleTopo);
-                        title([groupNames{1} '-' groupNames{2}] ,'fontsize',14);
+                        title([groupNames{1} '-' groupNames{2}] ,'fontsize',18);
                         ach=colorbar;
                         ach.Location='southoutside';
-                        ach.Position =  [0.836  0.08 0.12 0.02];  ach.FontWeight = 'bold'; ach.FontSize  =12;
+                        ach.Position =  [0.836  0.07 0.12 0.02];  ach.FontWeight = 'bold'; ach.FontSize  =12;
                         ach.Label.String = 'Change in Power (dB)';
-                        ach.Label.FontSize = 12;
+                        ach.Label.FontSize = 14;
                     else
                         axes(hTopo(s));
-                        title(groupNames{s},'fontsize',14,'Color', displaySettings.colorNames(s,:),'fontweight','bold');
+                        title(groupNames{s},'fontsize',20,'Color', displaySettings.colorNames(s,:),'fontweight','bold');
                         data = logTopoData{i,1}{s};                                                                                                                                                   data = logTopoData{i}{s};
                         comparisonData(s,:) = data;
                         topoplot(data,montageChanlocs,'electrodes','on','maplimits',cLimsTopo,'plotrad',0.6,'headrad',0.6,'style',styleTopo);
@@ -256,22 +256,25 @@ for g=1:length(groupPos)
 
             if g==1
                 %if i==1;     legend(titleStr{1},'',titleStr{2});         end
-                title(hPSD,protocolNames{i},'FontSize',18);
-                set(hPSD,'xtick',[10 50 100 200],'xticklabel',[], 'LineWidth',1,'XMinorTick','on','Ticklength',[0.02 0.02],'FontWeight','bold','Fontsize',14);
+                title(hPSD,protocolNames{i},'FontSize',20);
+                set(hPSD,'xtick',[10 50 100 200],'xticklabel',[], 'LineWidth',1,'XMinorTick','on','Ticklength',[0.02 0.02],'FontWeight','bold','Fontsize',labelFontSize);
             else
-                set(hPSD,'xtick',[10 50 100 200],'xticklabel',[10 50 100 200], 'LineWidth',1,'XMinorTick','on','Ticklength',[0.02 0.02],'FontWeight','bold','Fontsize',14);
-                xlabel(hPSD,'Frequency (Hz)','Fontsize',14,'FontWeight','bold');
+                set(hPSD,'xtick',[10 50 100 200],'xticklabel',[10 50 100 200], 'LineWidth',1,'XMinorTick','on','Ticklength',[0.02 0.02],'FontWeight','bold','Fontsize',labelFontSize);
+                xlabel(hPSD,'Frequency (Hz)','Fontsize',labelFontSize,'FontWeight','bold');
             end
 
             if i==1
-               yl= ylabel(hPSD,'Power (log_{10}(\muV^2))','Fontsize',14,'FontWeight','bold');
-                set(hPSD,'YTick',[-2 -1 0 1]);
+                if g==2 
+               yl= ylabel(hPSD,'Power (log_{10}(\muV^2))','Fontsize',labelFontSize,'FontWeight','bold');
+                yl.Position(2) = 1;
+                end 
+               set(hPSD,'YTick',[-2 -1 0 1]);
 
             else
                 set(hPSD,'YTickLabel',[],'YTick',[-2 -1 0 1]);
             end
 
-            makeShadedRegion(hPSD,freqRangeList{2},yLimsPSD{g},[rgb('Cyan')],0.1);
+            makeShadedRegion(hPSD,freqRangeList{2},yLimsPSD{g},[rgb('Cyan')],0.15);
             box off;
             %%%%%%%%%%%%%%%%%%%%%%%%%%% Violin Plot %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
             if displayInsetFlag
@@ -292,7 +295,7 @@ for g=1:length(groupPos)
                 displaySettings.commonYLim = 1;
                 displaySettings.xPositionText =0.8;
                 displaySettings.textFontSize = 10;
-                displaySettings.yPositionLine=0.2;
+                displaySettings.yPositionLine=0.15;
                 ax=displayViolinPlot(logPower{g,i},[{displaySettings.colorNames(1,:)} {displaySettings.colorNames(2,:)}],1,1,1,pairedDataFlag,displaySettings);
                 set(ax,'FontWeight','bold');
             end
@@ -310,50 +313,7 @@ end
 annotation('textbox',[0.111875 0.728827238335435 0.1 0.2], 'String','Occipital','EdgeColor','none','FontWeight','bold','FontSize',20,'Rotation',90,'Color',colorList(1,:));
 annotation('textbox',[0.111875 0.420176544766709 0.12 0.2], 'String','Fronto-Temporal','EdgeColor','none','FontWeight','bold','FontSize',20,'Rotation',90,'Color',colorList(2,:));
 
-annotation(gcf,'textbox',[0.22 0.885245901639345 0.07375 0.0380920554854982],'Color',displaySettings.colorNames(2,:),...
-    'String','Controls',...
-    'LineStyle','none',...
-    'FontWeight','bold',...
-    'FontSize',14,...
-    'FitBoxToText','off');
 
-annotation(gcf,'textbox',[0.20875 0.844892812105927 0.07375 0.0380920554854981],'Color',displaySettings.colorNames(1,:),...
-    'String',{'Meditators'},...
-    'LineStyle','none',...
-    'FontWeight','bold',...
-    'FontSize',14,...
-    'FitBoxToText','off');
-
-annotation(gcf,'textbox',[0.741875 0.928121059268601 0.0737500000000002 0.0380920554854982],...
-    'Color',displaySettings.colorNames(2,:),...
-    'String','Controls',...
-    'LineStyle','none',...
-    'FontWeight','bold',...
-    'FontSize',14,...
-    'FitBoxToText','off');
-
-annotation(gcf,'textbox',[0.731875 0.896595208070618 0.07375 0.0380920554854981],'Color',displaySettings.colorNames(1,:),...
-    'String',{'Meditators'},...
-    'LineStyle','none',...
-    'FontWeight','bold',...
-    'FontSize',14,...
-    'FitBoxToText','off');
-
-annotation(gcf,'textbox',[0.72375 0.863808322824717 0.0975 0.0380920554854982],'Color',displaySettings.colorNames(4,:),'String','-- Con (EO1)','LineStyle','none',...
-    'FontWeight','bold',...
-    'FontSize',14,...
-    'FitBoxToText','off');
-
-annotation(gcf,'textbox',[0.723125 0.825977301387137 0.08125 0.0393530895334175],'Color',displaySettings.colorNames(3,:),...
-    'String','-- Med (EO1)',...
-    'LineStyle','none',...
-    'FontWeight','bold',...
-    'FontSize',14,...
-    'FitBoxToText','off');
-
-annotation(gcf,'textbox',[0.870625 0.947297604937271 0.0609374983701856 0.0428751567272941],'String',{'M1-EO1'},'LineStyle','none',...
-    'FontWeight','bold',...
-    'FontSize',14);
 
 
 
@@ -368,6 +328,7 @@ set(findobj(gcf,'type','axes'),'box','off'...
     );
 
 finalPlotsSaveFolder ='D:\Projects\ProjectDhyaan\BK1\ProjectDhyaanBK1Programs\powerProjectCodes\savedFigures';
+
 if saveFlag
     figure1.Color = [1 1 1];
     savefig(figure1,fullfile(finalPlotsSaveFolder,'MeditationFigure4.fig'));

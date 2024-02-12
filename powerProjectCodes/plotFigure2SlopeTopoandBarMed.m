@@ -117,8 +117,8 @@ for iProtocol = 1:length(numProt)
     end
        %if iProtocol==1
            c = colorbar;
-           c.Location = 'southoutside'; c.Position =  [c.Position(1)-0.018 0.07 0.1 0.02]; c.FontSize = 10; c.FontWeight = 'bold';
-            c.Label.String ='Change in Slope'; c.Label.FontSize = 10;
+           c.Location = 'southoutside'; c.Position =  [c.Position(1)-0.0115 0.07 0.09 0.02]; c.FontSize = 12; c.FontWeight = 'bold';
+            c.Label.String ='Change in Slope'; c.Label.FontSize = 14;
        %end
 
 
@@ -169,7 +169,7 @@ for iProtocol = 1:length(numProt)
 
         displaySettings.showYTicks=1;
         displaySettings.showXTicks=1;
-        ylabel(hBarSlope(iProtocol),'Slope','FontSize',10);
+        ylabel(hBarSlope(iProtocol),'Slope','FontSize',14);
 
         displaySettings.setYLim=[0 3];
         displaySettings.commonYLim = 1;
@@ -177,7 +177,7 @@ for iProtocol = 1:length(numProt)
         displaySettings.textFontSize = 11;
         displaySettings.yPositionLine=0;
         ax(iProtocol)=displayViolinPlot(meanParamData{iParam},[{displaySettings.colorNames(1,:)} {displaySettings.colorNames(2,:)}],1,1,1,pairedDataFlag,displaySettings);
-        set(ax(iProtocol),'YTickLabel',[0 1 2 3],'fontWeight','bold','fontsize',10,'TickLength',[0.04 0.04]);
+        set(ax(iProtocol),'YTickLabel',[0 1 2 3],'fontWeight','bold','fontsize',14,'TickLength',[0.04 0.04]);
 
     end
 
