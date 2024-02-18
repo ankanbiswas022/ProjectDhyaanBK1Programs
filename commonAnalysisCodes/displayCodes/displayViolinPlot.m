@@ -37,7 +37,7 @@ xTickLabels      = displaySettings.xTickLabels;
 parametricTest   = displaySettings.parametricTest;
 
 % set Plot Options:
-axes(displaySettings.plotAxes);
+% axes(displaySettings.plotAxes);
 ax=gca;
 set(ax,'TickDir','out','TickLength',displaySettings.tickLengthMedium);
 if ~showYTicks && commonYLim
