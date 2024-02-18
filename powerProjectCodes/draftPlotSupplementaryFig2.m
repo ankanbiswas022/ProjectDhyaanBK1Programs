@@ -3,7 +3,7 @@ clear
 close all
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%% Initial variables %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 figure1 = figure('WindowState','maximized','Color',[1 1 1]);
-hTopo = getPlotHandles(1,3,[0.1 0.1 0.8 0.8],0.01,0.06);
+hTopo = getPlotHandles(1,3,[0.1 0.1 0.8 0.8],0.05,0.06);
 
 fontsize       = 12;
 comparisonStr  = 'paired';
@@ -24,7 +24,7 @@ freqRangeList{2} = [30 80]; % spontaneous gamma range
 % axisRangeList{1}    = [5 200];     axisRangeName{1} = 'Freq Lims (Hz)';
 % axisRangeList{2}{1} = [-2 1];      axisRangeName{2} = 'YLims';
 % axisRangeList{2}{2} = [-2.5 0.5];
-axisRangeList{3}    = [-3 3];  axisRangeName{3} = 'cLims (topo)';
+axisRangeList{3}    = [-4 4];  axisRangeName{3} = 'cLims (topo)';
 
 styleTopo = 'both'; %if 'both', both contur and color, if 'map', no contour lines
 colormap('jet');
@@ -93,8 +93,8 @@ for i=1:numProtocols
     axes(hTopo(i));
     topoplot(10*data,montageChanlocs,'electrodes','on','maplimits',cLimsTopo,'plotrad',0.6,'headrad',0.6,'style',styleTopo);
 %     title({protocolNames{i};['(' groupNames{1} '-' groupNames{2}  ')']} ,'fontsize',14);
-    title(protocolNames{i},'fontsize',16);
-    subtitle(['(' groupNames{1} '-' groupNames{2} ')'],'fontsize',16);
+    title(protocolNames{i},'fontsize',20);
+    subtitle(['(' groupNames{1} '-' groupNames{2} ')'],'fontsize',20);
     if i==2
         ach=colorbar;
         ach.Location       ='southoutside';

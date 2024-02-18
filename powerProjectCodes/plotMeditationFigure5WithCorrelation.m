@@ -50,7 +50,7 @@ axisRangeList{2} = [-2 1]; axisRangeName{2} = 'YLims';
 axisRangeList{3} = [-2 2]; axisRangeName{3} = 'cLims (topo)';
 axisRangeList{4} = [-2.5 2]; axisRangeName{3} = 'YLims';
 
-cutoffList = [3 10];
+cutoffList = [0 0];
 useMedianFlag = 0;
 
 if strcmp(comparisonStr,'paired')

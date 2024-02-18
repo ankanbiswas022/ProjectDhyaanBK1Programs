@@ -171,13 +171,13 @@ for iProtocol = 1:length(numProt)
         displaySettings.showXTicks=1;
         ylabel(hBarSlope(iProtocol),'Slope','FontSize',14);
 
-        displaySettings.setYLim=[0 3];
+        displaySettings.setYLim=[0.25 3];
         displaySettings.commonYLim = 1;
         displaySettings.xPositionText =0.8;
         displaySettings.textFontSize = 11;
         displaySettings.yPositionLine=0;
         ax(iProtocol)=displayViolinPlot(meanParamData{iParam},[{displaySettings.colorNames(1,:)} {displaySettings.colorNames(2,:)}],1,1,1,pairedDataFlag,displaySettings);
-        set(ax(iProtocol),'YTickLabel',[0 1 2 3],'fontWeight','bold','fontsize',14,'TickLength',[0.04 0.04]);
+        set(ax(iProtocol),'YTick',[0 1 2 3],'YTickLabel',[0 1 2 3],'fontWeight','bold','fontsize',14,'TickLength',[0.04 0.04]);
 
     end
 
