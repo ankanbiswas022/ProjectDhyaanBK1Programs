@@ -1,5 +1,6 @@
 % Meditation Figure 2
 % Shows spontaneous gamma for EO1(combined), EC1(combined) and G1(Baseline)
+% final one which was used!
 % ---------------------------------------------------------------------------------------
 
 clf
