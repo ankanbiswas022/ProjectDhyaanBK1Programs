@@ -6,6 +6,7 @@ clear
 saveFlag=1;
 displayInsetFlag = 1;
 customColorMapFag = 1;
+getOccipitalFlag =0;
 
 % figH = figure('units','normalized','outerposition',[0 0 1 1]);
 figH = figure('WindowState','maximized','Color',[1 1 1]);
@@ -99,7 +100,7 @@ else % either combine or just get the data
         else
             freqPos=2; % slowGamma
         end
-        [psdDataTMP,powerDataTMP,goodSubjectNameListsTMP{i},topoplotDataTMP,freqVals] = displayPowerDataAllSubjects(subjectNameLists,protocolNames{i},analysisChoice{i},refChoices{i},badEyeCondition,badTrialVersion,badElectrodeRejectionFlag,stRange,freqRangeList,axisRangeList,cutoffList,useMedianFlag,hAllPlots,pairedDataFlag,0);
+        [psdDataTMP,powerDataTMP,goodSubjectNameListsTMP{i},topoplotDataTMP,freqVals] = displayPowerDataAllSubjects(subjectNameLists,protocolNames{i},analysisChoice{i},refChoices{i},badEyeCondition,badTrialVersion,badElectrodeRejectionFlag,stRange,freqRangeList,axisRangeList,cutoffList,useMedianFlag,hAllPlots,pairedDataFlag,0,getOccipitalFlag);
         for g=1:numGroups
             logPSDDataTMP{g,i}   = psdDataTMP{g};
             logPowerTMP{g,i}     = powerDataTMP{g,freqPos};

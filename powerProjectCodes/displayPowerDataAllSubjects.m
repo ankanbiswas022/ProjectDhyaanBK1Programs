@@ -11,7 +11,7 @@
 % Option added to return PSD, power and topoplot data. Also to simply
 % return these without displaying here.
 
-function [psdDataToReturn,powerDataToReturn,goodSubjectNameListsToReturn,topoplotDataToReturn,freqVals] = displayPowerDataAllSubjects(subjectNameLists,protocolName,analysisChoice,refChoice,badEyeCondition,badTrialVersion,badElectrodeRejectionFlag,stRange,freqRangeList,axisRangeList,cutoffList,useMedianFlag,hAllPlots,pairedDataFlag,displayDataFlag)
+function [psdDataToReturn,powerDataToReturn,goodSubjectNameListsToReturn,topoplotDataToReturn,freqVals] = displayPowerDataAllSubjects(subjectNameLists,protocolName,analysisChoice,refChoice,badEyeCondition,badTrialVersion,badElectrodeRejectionFlag,stRange,freqRangeList,axisRangeList,cutoffList,useMedianFlag,hAllPlots,pairedDataFlag,displayDataFlag,getOccipitalFlag)
 
 if ~exist('protocolName','var');          protocolName='G1';            end
 if ~exist('analysisChoice','var');        analysisChoice='st';          end
@@ -20,6 +20,8 @@ if ~exist('refChoice','var');             refChoice='none';             end
 if ~exist('badEyeCondition','var');       badEyeCondition='ep';         end
 if ~exist('badTrialVersion','var');       badTrialVersion='v8';         end
 if ~exist('badElectrodeRejectionFlag','var'); badElectrodeRejectionFlag=1;  end
+
+if ~exist('getOccipitalFlag','var'); getOccipitalFlag=0;  end
 
 if ~exist('stRange','var');               stRange = [0.25 1.25];        end
 
@@ -64,7 +66,7 @@ gridType = 'EEG';
 capType = 'actiCap64_UOL';
 saveFolderName = 'savedData';
 
-[electrodeGroupList,groupNameList] = getElectrodeGroups(gridType,capType);
+[electrodeGroupList,groupNameList] = getElectrodeGroups(gridType,capType,getOccipitalFlag);
 numGroups = length(electrodeGroupList);
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%% Generate plots %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

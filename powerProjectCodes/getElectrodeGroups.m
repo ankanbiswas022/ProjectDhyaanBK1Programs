@@ -1,32 +1,19 @@
-function [electrodeGroupList,groupNameList] = getElectrodeGroups(gridType,capType)
+function [electrodeGroupList,groupNameList] = getElectrodeGroups(gridType,capType,useFocalOccipitalFlag)
 
-[~,~,~,electrodeGroupList0,groupNameList0,highPriorityElectrodeNums] = electrodePositionOnGrid(1,gridType,[],capType);
+if ~exist('useFocalOccipitalFlag','var');    useFocalOccipitalFlag=0;        end
 
-% Combine some groups
+[~,~,~,~,~,highPriorityElectrodeNums] = electrodePositionOnGrid(1,gridType,[],capType);
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Occipital Electrodes %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Occipital Electrodes %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Option 1: Choose highPriority electrodes
-electrodeGroupList{1} = highPriorityElectrodeNums; % now called occipital
+if useFocalOccipitalFlag
+    electrodeGroupList{1} =[13  32+[12 20 16 15 17]];
+else
+    electrodeGroupList{1} = highPriorityElectrodeNums; % now called occipital
+end
 groupNameList{1} = 'Occipital';
 
-% Option 2: Choose occipital electrodes
-% electrodeGroupList{1} = electrodeGroupList0{1}; % now called occipital
-% groupNameList{1} = 'Occipital';
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Fronto-Central Electrodes %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-% Option 1: Choose default fronto-central electrodes
-% electrodeGroupList{2} = [electrodeGroupList0{3} electrodeGroupList0{4}]; % Fronto-Central and Frontal
-% groupNameList{2}      = 'Frontal-Central';
-
-% Option 2: Choose only frontal and central electrodes
-% subFrontal              = [1 32      32+[1 2 4 29 30 31]];
-% subFrontoCental         = [6 8 25 28 32+[9 24]];
-% % subTemporalTwo        = [9 26 32+[10 23 6 27]];
-% electrodeGroupList{2}   = [subFrontal subFrontoCental]; % Fronto-Central and Frontal
-% groupNameList{2}        = 'Sub-FrontoCentral';
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Fronto-Temporal Electrodes %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Option 3: Choose frontal, central and temporal electrodes
 subFrontal            = [1 32      32+[1 2 29 30 5 28]];
 subFrontoCental       = [6 8 25 28 32+[9 24]];
