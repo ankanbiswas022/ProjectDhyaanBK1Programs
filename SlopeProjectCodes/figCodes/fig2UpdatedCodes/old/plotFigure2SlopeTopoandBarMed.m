@@ -1,4 +1,4 @@
-function plotFigure2SlopeTopoandBarMed(subjectNameLists0,montageChanlocs, badEyeCondition,badTrialVersion, analysisChoice, badElectrodeRejectionFlag,cutOffList,useMedianFlag,significanceFlag,hTopoSlope,hBarSlope,colorNames)
+function plotFigure2SlopeTopoandBarMed(subjectNameLists0,montageChanlocs, badEyeCondition,badTrialVersion, analysisChoice, badElectrodeRejectionFlag,cutOffList,useMedianFlag,significanceFlag,hTopoSlope,hBarSlope)
 
 % goodSubjectNameLists = getGoodSubjectNameList(subjectNameLists,freqWidth,refType,badEyeCondition,badTrialVersion,protocolPos,protocolPosRef,analysisChoice,badElectrodeRejectionFlag,cutoffNumTrials,pairedDataFlag,saveFolderName);
 % subjectNameLists = goodSubjectNameLists;
@@ -16,7 +16,7 @@ saveFolderName = 'savedData';
 %nanValue = 0; % to omit nan in topoplots
 parameterName = [{'Slope'}];
 refType = 'unipolar';
-freqWidth = 86;
+freqWidth = 106;
 
 cutoffNumElectrodes = cutOffList(1);
 cutoffNumTrials = cutOffList(2);
@@ -115,11 +115,11 @@ for iProtocol = 1:length(numProt)
             topoplot(sigElectrodes,montageChanlocs,'electrodes','on','style','blank','emarker',{'.','k',12,1});
         end
     end
-       %if iProtocol==1
-           c = colorbar;
-           c.Location = 'southoutside'; c.Position =  [c.Position(1)-0.0115 0.07 0.09 0.02]; c.FontSize = 12; c.FontWeight = 'bold';
-            c.Label.String ='Change in Slope'; c.Label.FontSize = 14;
-       %end
+    %    if iProtocol==1
+    %        c = colorbar;
+    %        c.Location = 'southoutside'; c.Position =  [0.2 0.08 0.4 .02] ; c.FontSize = 8; c.FontWeight = 'bold';
+    %         c.Label.String ='Slope Difference'; c.Label.FontSize = 10; c.Label.FontWeight = 'bold';
+    %    end
 
 
     %%%%%%%%%%%%%%%%%%%%Add function for bar/violin plot %%%%%%%%%%%%%%%%%%%%%%%
@@ -154,12 +154,8 @@ for iProtocol = 1:length(numProt)
 
 
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        if ~exist("colorNames",'var')
         displaySettings.colorNames(1,:) = [ 1 0 0];
         displaySettings.colorNames(2,:) = [ 0 1 0];
-        else
-            displaySettings.colorNames = colorNames;
-        end
         displaySettings.plotAxes = hBarSlope(iProtocol);
         if ~useMedianFlag
             displaySettings.parametricTest = 1;
@@ -169,15 +165,15 @@ for iProtocol = 1:length(numProt)
 
         displaySettings.showYTicks=1;
         displaySettings.showXTicks=1;
-        ylabel(hBarSlope(iProtocol),'Slope','FontSize',14);
+        ylabel(hBarSlope(iProtocol),'Slope','FontSize',12);
 
-        displaySettings.setYLim=[0.25 3];
+        displaySettings.setYLim=[0 3];
         displaySettings.commonYLim = 1;
         displaySettings.xPositionText =0.8;
         displaySettings.textFontSize = 11;
         displaySettings.yPositionLine=0;
         ax(iProtocol)=displayViolinPlot(meanParamData{iParam},[{displaySettings.colorNames(1,:)} {displaySettings.colorNames(2,:)}],1,1,1,pairedDataFlag,displaySettings);
-        set(ax(iProtocol),'YTick',[0 1 2 3],'YTickLabel',[0 1 2 3],'fontWeight','bold','fontsize',14,'TickLength',[0.04 0.04]);
+        set(ax(iProtocol),'FontWeight','bold','fontsize',12);
 
     end
 

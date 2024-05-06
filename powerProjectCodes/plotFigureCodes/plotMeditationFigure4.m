@@ -3,14 +3,14 @@
 %% ------------Inital---------------------------------------------------------------------------
 clf
 clear
-saveFlag=0;
-fontSize = 16;
-getOccipitalFlag =0;
+saveFlag=1;
 displayInsetFlag = 1;
 customColorMapFag = 1;
+getOccipitalFlag =0;
+fontSize = 16;
 
 % figH = figure('units','normalized','outerposition',[0 0 1 1]);
-mainFigure2 = figure('WindowState','maximized','Color',[1 1 1]);
+figH = figure('WindowState','maximized','Color',[1 1 1]);
 
 colormap jet
 fontsize = 14;
@@ -122,7 +122,7 @@ displaySettings.tickLengthMedium = [0.025 0];
 % Cyan and Blue (CMYK)
 if customColorMapFag
     %     displaySettings.colorNames(1,:) = [ 0.5000         0    0.5000];
-    displaySettings.colorNames(1,:)    = [0.8 0 0.8];
+     displaySettings.colorNames(1,:)    = [0.8 0 0.8];
     displaySettings.colorNames(2,:)     = [0.25 0.41 0.88];
     displaySettings.colorNames(3,:)     = rgb('Purple');
     displaySettings.colorNames(4,:)     = rgb('Blue');
@@ -176,7 +176,7 @@ for g=1:length(groupPos)
                 xlim(hPSD,freqLims);
                 % end
             end
-            yticks(hPSD,yLimsPSD(1):1:yLimsPSD0(end));
+             yticks(hPSD,yLimsPSD(1):1:yLimsPSD0(end));
             rawPlotIndex= rawPlotIndex+1;
         else
             hPSD = hDeltaPSD(i,g);
@@ -219,7 +219,7 @@ for g=1:length(groupPos)
                     ach.Label.FontWeight = "bold";
                     ach.Label.FontSize = 16;
                     ach.Label.Color = [0 0 0];
-                    ach.FontSize = 14;
+                    ach.FontSize = 14;                  
                 end
             end
         end
@@ -252,7 +252,7 @@ if displayInsetFlag
                 elseif i==5 || i==6
                     yticklabels(hPSD,[]);
                     if i==5
-                        xticklabels(hPSD,[]);
+                        xticklabels(hPSD,[]);                         
                         title(hAllPlots(i),titlePSDArrays{2},'FontWeight','bold','FontSize',18);
                     elseif i==6
                         xlabel(hPSD,'Frequency (Hz)','FontSize',16);
@@ -264,7 +264,7 @@ if displayInsetFlag
                 else
                     hInset = axes('position', [hPos(1)+0.07 hPos(2)+0.238  0.0563  0.1114]);
                 end
-
+               
             else
                 displaySettings.setYLim=[-1 4.6];
                 ylim(hPSD,[-2.5 2.5]);
@@ -289,7 +289,7 @@ if displayInsetFlag
 
             displaySettings.showYTicks=1;
             displaySettings.showXTicks=1;
-            ylabel(hInset,'\Delta Power','FontSize',14);
+            ylabel(hInset,'Power','FontSize',14);
 
             displaySettings.commonYLim = 0;
             displaySettings.xPositionText =0.8;
@@ -415,7 +415,7 @@ annotation(gcf,'textbox',[  0.1681    0.6545    0.0975    0.0381],'Color',[0 0 1
 
 
 
-%%%%%%%%%%%%%% Occipital
+%%%%%%%%%%%%%% Occipital 
 annotation(gcf,'textbox',[0.03125 0.455494326511818 0.0840624976810069 0.0517023947996571],'String',{'Occipital'},'Rotation',90,'LineStyle','none',...
     'FontWeight','bold',...
     'FontSize',22,...
@@ -434,18 +434,18 @@ set(findobj(gcf,'type','axes'),'box','off'...
     );
 
 % figure captions
-annotation(mainFigure2,'textbox',[0.0581  0.9520  0.0738  0.0381],'String','A','LineStyle','none','FontWeight','bold','FontSize',fontSize+4,...
+annotation(figH,'textbox',[0.0581  0.9520  0.0738  0.0381],'String','A','LineStyle','none','FontWeight','bold','FontSize',fontSize+4,...
     'FitBoxToText','off');
 
-annotation(mainFigure2,'textbox',[0.4981  0.9520  0.0738  0.0381],'String','B','LineStyle','none','FontWeight','bold','FontSize',fontSize+4,...
+annotation(figH,'textbox',[0.4981  0.9520  0.0738  0.0381],'String','B','LineStyle','none','FontWeight','bold','FontSize',fontSize+4,...
     'FitBoxToText','off');
 
 finalPlotsSaveFolder ='D:\Projects\ProjectDhyaan\BK1\ProjectDhyaanBK1Programs\powerProjectCodes\savedFigures';
 if saveFlag
-    %     figH.Color = [1 1 1];
-    savefig(mainFigure2,fullfile(finalPlotsSaveFolder,'MeditationFigure3.fig'));
-    print(mainFigure2,fullfile(finalPlotsSaveFolder,'MeditationFigure3'),'-dsvg','-r300');
-    print(mainFigure2,fullfile(finalPlotsSaveFolder,'MeditationFigure3'),'-dtiff','-r300');
-    print(mainFigure2,fullfile(finalPlotsSaveFolder,'MeditationFigure3'),'-dpdf','-r300');
-    print(mainFigure2,fullfile(finalPlotsSaveFolder,'MeditationFigure3'),'-dpdf','-bestfit','-r300');
+    figH.Color = [1 1 1];
+    savefig(figH,fullfile(finalPlotsSaveFolder,'MeditationFigure3.fig'));
+    print(figH,fullfile(finalPlotsSaveFolder,'MeditationFigure3'),'-dsvg','-r300');
+    print(figH,fullfile(finalPlotsSaveFolder,'MeditationFigure3'),'-dtiff','-r300');
+    print(mainFigure4,fullfile(finalPlotsSaveFolder,'MeditationFigure3'),'-dpdf','-r300');
+    print(mainFigure4,fullfile(finalPlotsSaveFolder,'MeditationFigure3'),'-dpdf','-bestfit','-r300');
 end

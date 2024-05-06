@@ -3,7 +3,7 @@ function displayAndcompareData(hPlot,data,xs,displaySettings,yLims,displaySignif
 if ~exist('displaySignificanceFlag','var'); displaySignificanceFlag=0;  end
 if ~exist('useMedianFlag','var');           useMedianFlag=1;            end
 if ~exist('nonMatchedFlag','var');          nonMatchedFlag=1;           end
-if ~exist('showOnlyLineFlag','var');        showOnlyLineFlag=1;         end
+if ~exist('showOnlyLineFlag','var');        showOnlyLineFlag=0;         end
 if ~exist('lineStyle','var');               lineStyle='--';             end
 %if ~exist('xscaleLogFlag','var');           xscaleLogFlag=0;            end
 

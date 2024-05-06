@@ -1,49 +1,40 @@
 % Meditation Figure 2
 % Shows spontaneous gamma for EO1(combined), EC1(combined) and G1(Baseline)
+% final one which was used!
 % ---------------------------------------------------------------------------------------
 
 % clf
 clear
-figure()
+saveFlag = 0;
+mainFigure2 = figure('WindowState','maximized','Color',[1 1 1]);
+
 plotTopoFlag = 1;
 plotSlopeFlag = 1;
 freqSlopeRange = [104 190];
 displayInsetFlag = 1;
-customColorMapFag =1;
+customColorMapFag = 1;
 displaySignificanceFlag = 0; % for slope topoplot
 styleTopo = 'both'; %if 'both', both contur and color, if 'map', no contour lines
 colormap('jet');
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-% colorList = [rgb('RoyalBlue');rgb('DarkCyan')];
-% colorList = [[ 0.2539    0.4102    0.8789]; [0    0.5430    0.5430]];
-
-colorList = [rgb('Aqua');rgb('Orange')];
-% colorList = [[ 0.2539    0.4102    0.8789]; [0    0.5430    0.5430]];
-
-if customColorMapFag
-    % Cyan and Blue (CMYK)
-%     displaySettings.colorNames(1,:)     = [0.7 0 0.7];
-    displaySettings.colorNames(1,:)     = [0.7 0 0.7];
-    displaySettings.colorNames(2,:)     = [0 0.7 0.7];
-    displaySettings.colorNames(3,:) = [ 0.5000    0      0.5000];
-    displaySettings.colorNames(4,:) = [ 0.2539    0.4102    0.8789];
-else
-    % RGB Color scheme
-    displaySettings.colorNames(1,:) = [ 1 0 0];
-    displaySettings.colorNames(2,:) = [ 0 1 0];
-end
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+boxColor = [0.8 0.6 0.2];
 
 fontsize = 12;
+
+% updated font sizes
+labelFontSize = 16;
+titleFontSize = 20;
+annotationFontSize = 24;
+
+
 comparisonStr  = 'paired';
 protocolNames  = [{'EO1'}  {'EC1'}  {'M1'} {'M1'}];
 refChoices     = [{'none'} {'none'} {'none'} {'EO1'}] ;
 analysisChoice = {'combined','combined','combined','combined'};
 
 groupNames = {'Meditators','Controls'};
+% colorList = [rgb('RoyalBlue');rgb('DarkCyan')];
+% colorList = [[ 0.2539    0.4102    0.8789];[0    0.5430    0.5430]];
 
 badEyeCondition = 'ep';
 badTrialVersion = 'v8';
@@ -57,10 +48,10 @@ freqRangeList{2} = [30 80]; % spontaneous gamma range
 axisRangeList{1} = [5 200];     axisRangeName{1} = 'Freq Lims (Hz)';
 axisRangeList{2}{1} = [-2 1];  axisRangeName{2} = 'YLims';
 axisRangeList{2}{2} = [-2.5 0.5];
-axisRangeList{3} = [-1.5 1.5]; axisRangeName{3} = 'cLims (topo)';
+axisRangeList{3} = [-2 2]; axisRangeName{3} = 'cLims (topo)';
 
 useMedianFlag = 0;
-cutoffList    = [3 30];
+cutoffList    = [3 25];
 
 if strcmp(comparisonStr,'paired')
     pairedSubjectNameList = getPairedSubjectsBK1;
@@ -76,14 +67,19 @@ end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Make Plots %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-hPSDPlots = getPlotHandles(2,3,[0.08 0.38 0.7 0.53],0.02,0.04);
-hTopo = getPlotHandles(3,1,[0.83 0.1 0.11 0.82],0.01,0.06);
-hTopoSlope0 = getPlotHandles(1,6,[0.07 0.08 0.7 0.15],0.01);
+hPSDPlots = getPlotHandles(2,3,[0.08 0.46 0.72 0.49],0.03,0.04);
+hTopo = getPlotHandles(3,1,[0.82 0.11 0.15 0.8],0.01,0.06);
+% hTopoSlope = getPlotHandles(1,3,[0.08 0.088 0.63 0.23],0.1625);
+% hBarSlope = getPlotHandles(1,3,[0.21 0.053 0.61 0.23],0.175);
 
-for iTopo = 1:3
-    hTopoSlope(iTopo) = hTopoSlope0(2*(iTopo)-1);
-    hBarSlope(iTopo) = hTopoSlope0(2*iTopo);
-end
+hTopoSlope = getPlotHandles(1,3,[0.07 0.09 0.61 0.23],0.157);
+hBarSlope = getPlotHandles(1,3,[0.213 0.053 0.59 0.23],0.165);
+% hTopoSlope0 = getPlotHandles(1,6,[0.05 0.08 0.72 0.21],0.04);
+%
+% for iTopo = 1:3
+%     hTopoSlope(iTopo) = hTopoSlope0(2*(iTopo)-1);
+%     hBarSlope(iTopo) = hTopoSlope0(2*iTopo);
+% end
 % hAllPlots = getPlotHandles(3,4,[0.1 0.12 0.85 0.8],0.04,0.05);
 % hTopo     = hAllPlots(:,end);
 % hTopoSlope = hAllPlots(3,1:3);
@@ -124,6 +120,31 @@ else % either combine or just get the data
     logTopoData = logTopoDataTMP;
 end
 
+
+%%%%%%%%%%%%%%%%%%% colors %%%%%%%%%%%%%%%%%%%%%%%%%%
+% Cyan and Blue (CMYK)
+
+colorList = [rgb('Aqua');rgb('Orange')];
+
+if customColorMapFag
+    %     displaySettings.colorNames(1,:) = [ 0.5000         0    0.5000];
+    displaySettings.colorNames(1,:)    = [0.8 0 0.8];
+    displaySettings.colorNames(2,:)     = [0.25 0.41 0.88];
+    displaySettings.colorNames(3,:)     = rgb('Purple');
+    displaySettings.colorNames(4,:)     = rgb('Blue');
+    displaySettings.colorNames(5,:)     = [0.8 0 0.8];
+    displaySettings.colorNames(6,:)     = [0.25 0.41 0.88];
+else
+    % RGB Color scheme
+    displaySettings.colorNames(1,:) = [ 1 0 0];
+    displaySettings.colorNames(2,:) = [ 0 0 1];
+    displaySettings.colorNames(3,:) = rgb('Brown');
+    displaySettings.colorNames(4,:) = rgb('DarkGreen');
+
+    displaySettings.colorNames(5,:) = [ 1 0 0];
+    displaySettings.colorNames(6,:) = [ 0 0 1];
+end
+
 %%%%%%%%%%%%%%%%%%%%%%%% Plot topoplots slope %%%%%%%%%%%%%%%%%%%%%%%%%
 
 % loading Montage for the topoplot
@@ -134,13 +155,13 @@ x = load([capType '.mat']); montageChanlocs = x.chanlocs;
 
 for i=1:3
     for j=1:2
-        goodSubjectsSlope{i}{j} = goodSubjectNameListsTMP{i}{1,j};
+        goodSubjectsSlope{i}{j} = goodSubjectNameListsTMP{i}{2,j};
     end
 end
 
 if plotSlopeFlag
     analysisChoiceSlope = analysisChoice{1};
-    plotFigure2SlopeTopoandBarMed(goodSubjectsSlope,montageChanlocs, badEyeCondition,badTrialVersion, analysisChoiceSlope, badElectrodeRejectionFlag,cutoffList,useMedianFlag,displaySignificanceFlag,hTopoSlope,hBarSlope)
+    plotMeditationFigure2Associated(goodSubjectsSlope,montageChanlocs, badEyeCondition,badTrialVersion, analysisChoiceSlope, badElectrodeRejectionFlag,cutoffList,useMedianFlag,displaySignificanceFlag,hTopoSlope,hBarSlope,displaySettings.colorNames)
     %plotFigure1TopoMed(goodSubjectsSlope,montageChanlocs, badEyeCondition,badTrialVersion, analysisChoiceSlope, badElectrodeRejectionFlag,cutoffList(2),useMedianFlag,displaySignificanceFlag,hTopoSlope);
 end
 
@@ -151,6 +172,7 @@ displaySettings.fontSizeLarge = 10;
 displaySettings.tickLengthMedium = [0.025 0];
 displaySettings.xscaleLogFlag = 1;
 % displaySettings.colorNames(1,:) = [1 0 0];
+
 
 titleStr{1} = 'Meditators';
 titleStr{2} = 'Controls';
@@ -170,15 +192,15 @@ for g=1:length(groupPos)
                         data = -diff(squeeze(comparisonData(:,:)));
                         axes(hTopo(s));
                         topoplot(data,montageChanlocs,'electrodes','on','maplimits',cLimsTopo,'plotrad',0.6,'headrad',0.6,'style',styleTopo);
-                        title([groupNames{1} '-' groupNames{2}] ,'fontsize',12);
+                        title([groupNames{1} '-' groupNames{2}] ,'fontsize',14);
                         ach=colorbar;
                         ach.Location='southoutside';
-                        ach.Position =  [0.83  0.07 0.12 0.02];  ach.FontWeight = 'bold'; ach.FontSize  =10;
-                        ach.Label.String = '\Delta Power (dB)';
-                        ach.Label.FontSize = 10;
+                        ach.Position =  [0.836  0.07 0.12 0.02];  ach.FontWeight = 'bold'; ach.FontSize  =12;
+                        ach.Label.String = 'Change in Power (dB)';
+                        ach.Label.FontSize = 14;
                     else
                         axes(hTopo(s));
-                        title(groupNames{s},'fontsize',12,'Color', displaySettings.colorNames(s,:),'fontweight','bold');
+                        title(groupNames{s},'fontsize',14,'Color', displaySettings.colorNames(s,:),'fontweight','bold');
                         data = logTopoData{i,1}{s};                                                                                                                                                   data = logTopoData{i}{s};
                         comparisonData(s,:) = data;
                         topoplot(data,montageChanlocs,'electrodes','on','maplimits',cLimsTopo,'plotrad',0.6,'headrad',0.6,'style',styleTopo);
@@ -209,7 +231,7 @@ for g=1:length(groupPos)
                     data0{iSub} = nanmean(logPSDData{g,i}{iSub},1);
                     aFit=fit(log10(freqVals(freqSlope1:freqSlope2))',data0{iSub}(freqSlope1:freqSlope2)','poly1');
                     hold on;
-                    plot(hPSD,freqVals(freqSlope1:freqSlope2),aFit.p2+aFit.p1.*log10(freqVals(freqSlope1:freqSlope2)),'--k','lineWidth',2.5);
+                    plot(hPSD,freqVals(freqSlope1:freqSlope2),aFit.p2+aFit.p1.*log10(freqVals(freqSlope1:freqSlope2)),':k','lineWidth',4);
                 end
             end
             %%%%%%%%%%% Add -- lines from EO1 %%%%%%%%%%%%%%%
@@ -218,7 +240,7 @@ for g=1:length(groupPos)
                 showOnlyLineFlag = 1;
                 lineStyle = '--';
                 displaySettings2 = displaySettings;
-                displaySettings2.colorNames  = [1 0.4 0.4; 0.4 1 0.4];
+                displaySettings2.colorNames  = [displaySettings.colorNames(3,:) ; displaySettings.colorNames(4,:)];
                 displayAndcompareData(hPSD,logPSDData{g,p},freqVals,displaySettings2,yLimsPSD{g},0,useMedianFlag,~pairedDataFlag,showOnlyLineFlag,lineStyle);
             end
 
@@ -236,25 +258,27 @@ for g=1:length(groupPos)
             set(hPSD,'XScale','log');
 
             if g==1
-                if i==1;     legend(titleStr{1},'',titleStr{2});         end
-                title(hPSD,protocolNames{i},'FontSize',15);
-                set(hPSD,'xtick',[10 50 100 200],'xticklabel',[], 'LineWidth',1,'XMinorTick','off','Ticklength',[0.02 0.02],'FontWeight','bold');
+                %if i==1;     legend(titleStr{1},'',titleStr{2});         end
+                title(hPSD,protocolNames{i},'FontSize',18);
+                set(hPSD,'xtick',[10 50 100 200],'xticklabel',[], 'LineWidth',1,'XMinorTick','off','Ticklength',[0.02 0.02],'FontWeight','bold','Fontsize',14);
             else
-                set(hPSD,'xtick',[10 50 100 200],'xticklabel',[10 50 100 200], 'LineWidth',1,'XMinorTick','off','Ticklength',[0.02 0.02],'FontWeight','bold');
-                xlabel(hPSD,'Frequency (Hz)','Fontsize',12,'FontWeight','bold');
+                set(hPSD,'xtick',[10 50 100 200],'xticklabel',[10 50 100 200], 'LineWidth',1,'XMinorTick','off','Ticklength',[0.02 0.02],'FontWeight','bold','Fontsize',14);
+                xlabel(hPSD,'Frequency (Hz)','Fontsize',14,'FontWeight','bold');
             end
 
             if i==1
-                ylabel(hPSD,'Power (log_{10}(\muV^2))','Fontsize',12,'FontWeight','bold');
+               yl= ylabel(hPSD,'Power (log_{10}(\muV^2))','Fontsize',14,'FontWeight','bold');
                 set(hPSD,'YTick',[-2 -1 0 1]);
 
             else
                 set(hPSD,'YTickLabel',[],'YTick',[-2 -1 0 1]);
             end
+
+            makeShadedRegion(hPSD,freqRangeList{2},yLimsPSD{g},[rgb('Cyan')],0.1);
             box off;
             %%%%%%%%%%%%%%%%%%%%%%%%%%% Violin Plot %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
             if displayInsetFlag
-                hInset = axes('position', [hPos(1)+0.02 hPos(2)+0.032   0.0544    0.081]);
+                hInset = axes('position', [hPos(1)+0.029 hPos(2)+0.032   0.0544    0.079]);
                 displaySettings.plotAxes = hInset;
                 if ~useMedianFlag
                     displaySettings.parametricTest = 1;
@@ -265,13 +289,13 @@ for g=1:length(groupPos)
 
                 displaySettings.showYTicks=1;
                 displaySettings.showXTicks=1;
-                ylabel(hInset,'Power','FontSize',10);
+                ylabel(hInset,'Power','FontSize',14);
 
                 displaySettings.setYLim=[-1 2.3];
                 displaySettings.commonYLim = 1;
                 displaySettings.xPositionText =0.8;
                 displaySettings.textFontSize = 10;
-                displaySettings.yPositionLine=0.3;
+                displaySettings.yPositionLine=0.2;
                 ax=displayViolinPlot(logPower{g,i},[{displaySettings.colorNames(1,:)} {displaySettings.colorNames(2,:)}],1,1,1,pairedDataFlag,displaySettings);
                 set(ax,'FontWeight','bold');
             end
@@ -286,8 +310,91 @@ end
 % title(hAllPlots(1,2),'EC1','FontWeight','bold','FontSize',15);
 % title(hAllPlots(1,3),'M1','FontWeight','bold','FontSize',15);
 
-if customColorMapFag
-    % red-white-blue
-    mycolormap = customcolormap(linspace(0,1,11), {'#68011d','#b5172f','#d75f4e','#f7a580','#fedbc9','#f5f9f3','#d5e2f0','#93c5dc','#4295c1','#2265ad','#062e61'});
-    colormap(mycolormap);
+annotation('textbox',[0.111875 0.728827238335435 0.1 0.2], 'String','Occipital','EdgeColor','none','FontWeight','bold','FontSize',20,'Rotation',90,'Color',colorList(1,:));
+annotation('textbox',[0.111875 0.420176544766709 0.12 0.2], 'String','Fronto-Temporal','EdgeColor','none','FontWeight','bold','FontSize',20,'Rotation',90,'Color',colorList(2,:));
+
+annotation(gcf,'textbox',[  0.2313    0.8878    0.0737    0.0381],'Color',displaySettings.colorNames(2,:),...
+    'String','Controls',...
+    'LineStyle','none',...
+    'FontWeight','bold',...
+    'FontSize',14,...
+    'FitBoxToText','off');
+
+annotation(gcf,'textbox',[0.2319    0.9180    0.0737    0.0381],'Color',displaySettings.colorNames(1,:),...
+    'String',{'Meditators'},...
+    'LineStyle','none',...
+    'FontWeight','bold',...
+    'FontSize',14,...
+    'FitBoxToText','off');
+
+%%%%%%%%%%%%%% 2nd
+annotation(gcf,'textbox',[   0.7338    0.8890    0.0738    0.0381],...
+    'Color',displaySettings.colorNames(2,:),...
+    'String','Controls',...
+    'LineStyle','none',...
+    'FontWeight','bold',...
+    'FontSize',14,...
+    'FitBoxToText','off');
+
+annotation(gcf,'textbox',[  0.7331    0.9168    0.0737    0.0381],'Color',displaySettings.colorNames(1,:),...
+    'String',{'Meditators'},...
+    'LineStyle','none',...
+    'FontWeight','bold',...
+    'FontSize',14,...
+    'FitBoxToText','off');
+
+annotation(gcf,'textbox',[   0.7244    0.8285    0.0975    0.0381],'Color',displaySettings.colorNames(4,:), ...
+    'String','-- Con (EO1)','LineStyle','none',...
+    'FontWeight','bold',...
+    'FontSize',14,...
+    'FitBoxToText','off');
+
+annotation(gcf,'textbox',[0.7238    0.8575    0.0813    0.0394],'Color',displaySettings.colorNames(3,:),...
+    'String','-- Med (EO1)',...
+    'LineStyle','none',...
+    'FontWeight','bold',...
+    'FontSize',14,...
+    'FitBoxToText','off');
+
+annotation(gcf,'textbox',[0.870625 0.947297604937271 0.0609374983701856 0.0428751567272941],'String',{'M1-EO1'},'LineStyle','none',...
+    'FontWeight','bold',...
+    'FontSize',16);
+
+%% add labels
+annotation(gcf,'textbox',[0.01725 0.969735182849937 0.014625 0.0264817150063051],'String',{'A'},'LineStyle','none','FontWeight','bold',...
+    'FontSize',20,...
+    'FitBoxToText','off');
+annotation(gcf,'textbox',[0.309750000000002 0.969735182849937 0.0146250000000002 0.0264817150063051],'String','B','LineStyle','none',...
+    'FontWeight','bold',...
+    'FontSize',20,...
+    'FitBoxToText','off');
+annotation(gcf,'textbox',[0.552875000000002 0.969735182849937 0.0146250000000002 0.0264817150063051],'String','C','LineStyle','none',...
+    'FontWeight','bold',...
+    'FontSize',20,...
+    'FitBoxToText','off');
+annotation(gcf,'textbox',[0.818500000000001 0.969735182849937 0.0146250000000001 0.0264817150063051],'String','D','LineStyle','none',...
+    'FontWeight','bold',...
+    'FontSize',20,...
+    'FitBoxToText','off');
+
+
+%%
+set(gcf,'color','w');
+set(findobj(gcf,'type','axes'),'box','off'...
+    ,'FontWeight','Bold'...
+    ,'TickDir','out'...
+    ,'TickLength',[0.02 0.02]...
+    ,'linewidth',1.3...
+    ,'xcolor',[0 0 0]...
+    ,'ycolor',[0 0 0]...
+    );
+
+finalPlotsSaveFolder ='D:\Projects\ProjectDhyaan\BK1\ProjectDhyaanBK1Programs\powerProjectCodes\savedFigures';
+if saveFlag
+%     gcf.Color = [1 1 1];
+    savefig(gcf,fullfile(finalPlotsSaveFolder,'MeditationFigure2.fig'));
+    print(gcf,fullfile(finalPlotsSaveFolder,'MeditationFigure2'),'-dsvg','-r300');
+    print(gcf,fullfile(finalPlotsSaveFolder,'MeditationFigure2'),'-dtiff','-r300');
+    print(gcf,fullfile(finalPlotsSaveFolder,'MeditationFigure2'),'-dpdf','-r300');
+    print(gcf,fullfile(finalPlotsSaveFolder,'MeditationFigure2'),'-dpdf','-bestfit','-r300');
 end

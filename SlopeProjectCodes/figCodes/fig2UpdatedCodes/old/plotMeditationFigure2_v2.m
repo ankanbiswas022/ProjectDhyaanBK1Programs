@@ -2,40 +2,16 @@
 % Shows spontaneous gamma for EO1(combined), EC1(combined) and G1(Baseline)
 % ---------------------------------------------------------------------------------------
 
-% clf
+clf
 clear
-figure()
 plotTopoFlag = 1;
 plotSlopeFlag = 1;
 freqSlopeRange = [104 190];
 displayInsetFlag = 1;
-customColorMapFag =1;
+customColorMapFag = 0;
 displaySignificanceFlag = 0; % for slope topoplot
 styleTopo = 'both'; %if 'both', both contur and color, if 'map', no contour lines
 colormap('jet');
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-% colorList = [rgb('RoyalBlue');rgb('DarkCyan')];
-% colorList = [[ 0.2539    0.4102    0.8789]; [0    0.5430    0.5430]];
-
-colorList = [rgb('Aqua');rgb('Orange')];
-% colorList = [[ 0.2539    0.4102    0.8789]; [0    0.5430    0.5430]];
-
-if customColorMapFag
-    % Cyan and Blue (CMYK)
-%     displaySettings.colorNames(1,:)     = [0.7 0 0.7];
-    displaySettings.colorNames(1,:)     = [0.7 0 0.7];
-    displaySettings.colorNames(2,:)     = [0 0.7 0.7];
-    displaySettings.colorNames(3,:) = [ 0.5000    0      0.5000];
-    displaySettings.colorNames(4,:) = [ 0.2539    0.4102    0.8789];
-else
-    % RGB Color scheme
-    displaySettings.colorNames(1,:) = [ 1 0 0];
-    displaySettings.colorNames(2,:) = [ 0 1 0];
-end
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 fontsize = 12;
 comparisonStr  = 'paired';
@@ -44,6 +20,8 @@ refChoices     = [{'none'} {'none'} {'none'} {'EO1'}] ;
 analysisChoice = {'combined','combined','combined','combined'};
 
 groupNames = {'Meditators','Controls'};
+% colorList = [rgb('RoyalBlue');rgb('DarkCyan')];
+colorList = [[ 0.2539    0.4102    0.8789];[0    0.5430    0.5430]];
 
 badEyeCondition = 'ep';
 badTrialVersion = 'v8';
@@ -76,9 +54,9 @@ end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Make Plots %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-hPSDPlots = getPlotHandles(2,3,[0.08 0.38 0.7 0.53],0.02,0.04);
-hTopo = getPlotHandles(3,1,[0.83 0.1 0.11 0.82],0.01,0.06);
-hTopoSlope0 = getPlotHandles(1,6,[0.07 0.08 0.7 0.15],0.01);
+hPSDPlots = getPlotHandles(2,3,[0.08 0.42 0.7 0.53],0.01,0.01);
+hTopo = getPlotHandles(3,1,[0.81 0.1 0.15 0.86],0.01,0.06);
+hTopoSlope0 = getPlotHandles(1,6,[0.05 0.08 0.7 0.23],0.03);
 
 for iTopo = 1:3
     hTopoSlope(iTopo) = hTopoSlope0(2*(iTopo)-1);
@@ -152,6 +130,16 @@ displaySettings.tickLengthMedium = [0.025 0];
 displaySettings.xscaleLogFlag = 1;
 % displaySettings.colorNames(1,:) = [1 0 0];
 
+% Cyan and Blue (CMYK)
+if customColorMapFag
+    displaySettings.colorNames(1,:) = [ 0.5000    0      0.5000];
+    displaySettings.colorNames(2,:) = [ 0.2539    0.4102    0.8789];
+else
+    % RGB Color scheme
+    displaySettings.colorNames(1,:) = [ 1 0 0];
+    displaySettings.colorNames(2,:) = [ 0 1 0];
+end
+
 titleStr{1} = 'Meditators';
 titleStr{2} = 'Controls';
 
@@ -172,17 +160,17 @@ for g=1:length(groupPos)
                         topoplot(data,montageChanlocs,'electrodes','on','maplimits',cLimsTopo,'plotrad',0.6,'headrad',0.6,'style',styleTopo);
                         title([groupNames{1} '-' groupNames{2}] ,'fontsize',12);
                         ach=colorbar;
-                        ach.Location='southoutside';
-                        ach.Position =  [0.83  0.07 0.12 0.02];  ach.FontWeight = 'bold'; ach.FontSize  =10;
-                        ach.Label.String = '\Delta Power (dB)';
-                        ach.Label.FontSize = 10;
+                            ach.Location='southoutside';
+                            ach.Position =  [0.83  0.07 0.12 0.02];  ach.FontWeight = 'bold'; ach.FontSize  =10;
+                            ach.Label.String = '\Delta Power (dB)';
+                            ach.Label.FontSize = 10;
                     else
                         axes(hTopo(s));
                         title(groupNames{s},'fontsize',12,'Color', displaySettings.colorNames(s,:),'fontweight','bold');
                         data = logTopoData{i,1}{s};                                                                                                                                                   data = logTopoData{i}{s};
                         comparisonData(s,:) = data;
                         topoplot(data,montageChanlocs,'electrodes','on','maplimits',cLimsTopo,'plotrad',0.6,'headrad',0.6,'style',styleTopo);
-
+      
                     end
                     if s==1
                         [electrodeGroupList,groupNameList] = getElectrodeGroups(gridType,capType);
@@ -203,16 +191,16 @@ for g=1:length(groupPos)
 
             %%%% Add slope lines
             if g==2
-                freqSlope1 = freqSlopeRange(1)+1;
-                freqSlope2 = freqSlopeRange(2)+1;
-                for iSub = 1:2
-                    data0{iSub} = nanmean(logPSDData{g,i}{iSub},1);
-                    aFit=fit(log10(freqVals(freqSlope1:freqSlope2))',data0{iSub}(freqSlope1:freqSlope2)','poly1');
-                    hold on;
-                    plot(hPSD,freqVals(freqSlope1:freqSlope2),aFit.p2+aFit.p1.*log10(freqVals(freqSlope1:freqSlope2)),'--k','lineWidth',2.5);
-                end
+            freqSlope1 = freqSlopeRange(1)+1;  
+            freqSlope2 = freqSlopeRange(2)+1;  
+            for iSub = 1:2
+                data0{iSub} = nanmean(logPSDData{g,i}{iSub},1);
+                aFit=fit(log10(freqVals(freqSlope1:freqSlope2))',data0{iSub}(freqSlope1:freqSlope2)','poly1');
+                hold on;
+                plot(hPSD,freqVals(freqSlope1:freqSlope2),aFit.p2+aFit.p1.*log10(freqVals(freqSlope1:freqSlope2)),'--k','lineWidth',2.5);
             end
-            %%%%%%%%%%% Add -- lines from EO1 %%%%%%%%%%%%%%%
+            end
+        %%%%%%%%%%% Add -- lines from EO1 %%%%%%%%%%%%%%%
             if i==3  % M1 protocol
                 p=1; % EO1
                 showOnlyLineFlag = 1;
@@ -234,7 +222,7 @@ for g=1:length(groupPos)
             xlim(hPSD,freqLims);
             ylim(hPSD,yLimsPSD{g});
             set(hPSD,'XScale','log');
-
+            
             if g==1
                 if i==1;     legend(titleStr{1},'',titleStr{2});         end
                 title(hPSD,protocolNames{i},'FontSize',15);
@@ -247,7 +235,7 @@ for g=1:length(groupPos)
             if i==1
                 ylabel(hPSD,'Power (log_{10}(\muV^2))','Fontsize',12,'FontWeight','bold');
                 set(hPSD,'YTick',[-2 -1 0 1]);
-
+            
             else
                 set(hPSD,'YTickLabel',[],'YTick',[-2 -1 0 1]);
             end
@@ -262,16 +250,16 @@ for g=1:length(groupPos)
                     displaySettings.parametricTest = 0;
                 end
 
-
-                displaySettings.showYTicks=1;
-                displaySettings.showXTicks=1;
-                ylabel(hInset,'Power','FontSize',10);
-
+               
+                    displaySettings.showYTicks=1;
+                    displaySettings.showXTicks=1;
+                    ylabel(hInset,'Power','FontSize',10);
+               
                 displaySettings.setYLim=[-1 2.3];
                 displaySettings.commonYLim = 1;
                 displaySettings.xPositionText =0.8;
                 displaySettings.textFontSize = 10;
-                displaySettings.yPositionLine=0.3;
+                 displaySettings.yPositionLine=0.3; 
                 ax=displayViolinPlot(logPower{g,i},[{displaySettings.colorNames(1,:)} {displaySettings.colorNames(2,:)}],1,1,1,pairedDataFlag,displaySettings);
                 set(ax,'FontWeight','bold');
             end
@@ -279,3 +267,15 @@ for g=1:length(groupPos)
     end
 end
 
+% Add labels:
+% xlabel(hAllPlots(2,1),'Frequency(Hz)','FontWeight','bold','FontSize',12);
+% ylabel(hAllPlots(2,1),'Power (log_{10}(\muV^2))','FontWeight','bold','FontSize',12);
+% title(hAllPlots(1,1),'EO1','FontWeight','bold','FontSize',15);
+% title(hAllPlots(1,2),'EC1','FontWeight','bold','FontSize',15);
+% title(hAllPlots(1,3),'M1','FontWeight','bold','FontSize',15);
+
+if customColorMapFag
+    % red-white-blue
+    mycolormap = customcolormap(linspace(0,1,11), {'#68011d','#b5172f','#d75f4e','#f7a580','#fedbc9','#f5f9f3','#d5e2f0','#93c5dc','#4295c1','#2265ad','#062e61'});
+    colormap(mycolormap);
+end

@@ -153,7 +153,7 @@ x = load([capType '.mat']); montageChanlocs = x.chanlocs;
 
 for i=1:3
     for j=1:2
-        goodSubjectsSlope{i}{j} = goodSubjectNameListsTMP{i}{1,j};
+        goodSubjectsSlope{i}{j} = goodSubjectNameListsTMP{i}{2,j};
     end
 end
 
@@ -193,9 +193,9 @@ for g=1:length(groupPos)
                         title([groupNames{1} '-' groupNames{2}] ,'fontsize',14);
                         ach=colorbar;
                         ach.Location='southoutside';
-                        ach.Position =  [0.836  0.08 0.12 0.02];  ach.FontWeight = 'bold'; ach.FontSize  =12;
+                        ach.Position =  [0.836  0.07 0.12 0.02];  ach.FontWeight = 'bold'; ach.FontSize  =12;
                         ach.Label.String = 'Change in Power (dB)';
-                        ach.Label.FontSize = 12;
+                        ach.Label.FontSize = 14;
                     else
                         axes(hTopo(s));
                         title(groupNames{s},'fontsize',14,'Color', displaySettings.colorNames(s,:),'fontweight','bold');
@@ -372,8 +372,10 @@ set(findobj(gcf,'type','axes'),'box','off'...
 
 finalPlotsSaveFolder ='D:\Projects\ProjectDhyaan\BK1\ProjectDhyaanBK1Programs\powerProjectCodes\savedFigures';
 if saveFlag
-    gcf.Color = [1 1 1];
+%     gcf.Color = [1 1 1];
     savefig(gcf,fullfile(finalPlotsSaveFolder,'MeditationFigure2.fig'));
     print(gcf,fullfile(finalPlotsSaveFolder,'MeditationFigure2'),'-dsvg','-r300');
     print(gcf,fullfile(finalPlotsSaveFolder,'MeditationFigure2'),'-dtiff','-r300');
+    print(gcf,fullfile(finalPlotsSaveFolder,'MeditationFigure2'),'-dpdf','-r300');
+    print(gcf,fullfile(finalPlotsSaveFolder,'MeditationFigure2'),'-dpdf','-bestfit','-r300');
 end

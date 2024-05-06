@@ -3,16 +3,12 @@ function displayAndcompareData(hPlot,data,xs,displaySettings,yLims,displaySignif
 if ~exist('displaySignificanceFlag','var'); displaySignificanceFlag=0;  end
 if ~exist('useMedianFlag','var');           useMedianFlag=1;            end
 if ~exist('nonMatchedFlag','var');          nonMatchedFlag=1;           end
-if ~exist('showOnlyLineFlag','var');        showOnlyLineFlag=1;         end
+if ~exist('showOnlyLineFlag','var');        showOnlyLineFlag=0;         end
 if ~exist('lineStyle','var');               lineStyle='--';             end
-%if ~exist('xscaleLogFlag','var');           xscaleLogFlag=0;            end
+if ~exist('xscaleLogFlag','var');           xscaleLogFlag=0;            end
 
-if isfield(displaySettings,'xscaleLogFlag')
-    xscaleLogFlag = displaySettings.xscaleLogFlag;
-else
-    xscaleLogFlag = 0;
-end
-
+xscaleLogFlag = displaySettings.xscaleLogFlag;
+% xscaleLogFlag = 0;
 
 if useMedianFlag
     getLoc = @(g)(squeeze(median(g,1)));
@@ -98,7 +94,7 @@ if displaySignificanceFlag % Do significance Testing
         clear xVals; xVals = [xBegPos xEndPos xEndPos xBegPos]';
 
         if (p<0.05)
-            patch(xVals,yVals,[0.6 0.6 0.6],'linestyle','none');
+            patch(xVals,yVals,[0.8 0.8 0.8],'linestyle','none');
         end
         if (p<0.01)
             patch(xVals,yVals,[0 0 0],'linestyle','none');
