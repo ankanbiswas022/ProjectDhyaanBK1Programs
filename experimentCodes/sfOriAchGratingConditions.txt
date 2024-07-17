@@ -1,0 +1,9 @@
+Condition	Frequency	Block	Timing File	Info	TaskObject#1	TaskObject#2	
+1	1	1	sfOriAchGratingTime	'sf1',2,'sf2',4,'ori1',0,'ori2',45,'ori3',90,'ori4',135	fix(0,0)	gen('make_grating_s2_o0',0,0)	
+2	1	1	sfOriAchGratingTime	'sf1',2,'sf2',4,'ori1',0,'ori2',45,'ori3',90,'ori4',135	fix(0,0)	gen('make_grating_s2_o45.m',0,0)	
+3	1	1	sfOriAchGratingTime	'sf1',2,'sf2',4,'ori1',0,'ori2',45,'ori3',90,'ori4',135	fix(0,0)	gen('make_grating_s2_o90.m',0,0)	
+4	1	1	sfOriAchGratingTime	'sf1',2,'sf2',4,'ori1',0,'ori2',45,'ori3',90,'ori4',135	fix(0,0)	gen('make_grating_s2_o135.m',0,0)	
+5	1	1	sfOriAchGratingTime	'sf1',2,'sf2',4,'ori1',0,'ori2',45,'ori3',90,'ori4',135	fix(0,0)	gen('make_grating_s4_o0.m',0,0)	
+6	1	1	sfOriAchGratingTime	'sf1',2,'sf2',4,'ori1',0,'ori2',45,'ori3',90,'ori4',135	fix(0,0)	gen('make_grating_s4_o45.m',0,0)	
+7	1	1	sfOriAchGratingTime	'sf1',2,'sf2',4,'ori1',0,'ori2',45,'ori3',90,'ori4',135	fix(0,0)	gen('make_grating_s4_o90.m',0,0)	
+8	1	1	sfOriAchGratingTime	'sf1',2,'sf2',4,'ori1',0,'ori2',45,'ori3',90,'ori4',135	fix(0,0)	gen('make_grating_s4_o135.m',0,0) 	
