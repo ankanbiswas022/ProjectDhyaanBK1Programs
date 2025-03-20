@@ -1,4 +1,4 @@
-function ax=displayViolinPlot(dataArray,colorArray,showData,plotMean,showSignificance,pairedDataFlag,displaySettings)
+function [ax, xPosDataGroups, dataValues, violinData]=displayViolinPlot(dataArray,colorArray,showData,plotMean,showSignificance,pairedDataFlag,displaySettings)
 % displayViolinPlot makes the violin plots using the kernel desnsity estimate
 % of the original data, kernel density is estimated using the Matlab statistical toolbox function, ksdensity
 % The code is adapted from the original source, "https://github.com/bastibe/Violinplot-Matlab"
@@ -32,6 +32,7 @@ xPositionText    = displaySettings.xPositionText;
 setYLim          = displaySettings.setYLim;
 commonYLim       = displaySettings.commonYLim;
 showXTicks       = displaySettings.showXTicks;
+showYTicks       = displaySettings.showYTicks;  % Extract showYTicks from displaySettings
 xTickLabels      = displaySettings.xTickLabels;
 parametricTest   = displaySettings.parametricTest;
 plotQuartiles    = displaySettings.plotQuartiles;
@@ -53,10 +54,20 @@ else
     ax.XTickLabel = [];
 end
 
+% Enable Y tick marks if requested
+if showYTicks
+    set(ax, 'YTickMode', 'auto'); % Show Y-axis tick marks
+    set(ax, 'Box', 'off'); % Cleaner look
+else
+    set(ax, 'YTickLabel', []); % Hide Y-axis labels
+end
+
 % calculate kernel density
 meanData = zeros(1,size(Y,2));
 semData  = zeros(1,size(Y,2));
-xPosDataGroups = zeros(length(Y),length(Y{:,1}));
+xPosDataGroups = cell(1, size(Y,2));
+dataValues = Y;
+violinData = cell(1, size(Y,2)); % Store violin data for later use
 
 for pos=1:size(Y,2)
     width = 0.3;
@@ -71,6 +82,11 @@ for pos=1:size(Y,2)
 
     % violinWidth and the boxWidth
     width = width/max(density);
+    
+    % Store data for external use
+    violinData{pos}.density = density;
+    violinData{pos}.value = value;
+    violinData{pos}.width = width;
 
     % plot violin plot
     patch([pos+density*width pos-density(end:-1:1)*width], ...
@@ -83,10 +99,16 @@ for pos=1:size(Y,2)
         jitterstrength = interp1(value(unique_idx), density(unique_idx)*width, data, 'linear','extrap');
         jitter = 2*(rand(size(data))-0.5);
         xPosData = pos + jitter.*jitterstrength;
-        if pairedDataFlag
-            xPosDataGroups(pos,:) = xPosData;
+        xPosDataGroups{pos} = xPosData;
+        
+        % Only call scatter if dataMarkerSize is positive
+        if dataMarkerSize > 0
+            scatter(xPosData, data, dataMarkerSize, 'filled', 'MarkerFaceColor', colorArray{pos});
         end
-        scatter(xPosData, data, dataMarkerSize, 'filled','MarkerFaceColor',colorArray{pos});
+    else
+        % Even if not showing data, still need to generate positions for potential later use
+        jitter = 0.1 * (2*(rand(size(data))-0.5));
+        xPosDataGroups{pos} = pos + jitter;
     end
 
     meanData(pos) = mean(data,'omitnan');
@@ -109,8 +131,8 @@ for pos=1:size(Y,2)
 end
 
 if pairedDataFlag
-    for i=1:length(xPosDataGroups)
-        xPosLine = xPosDataGroups(:,i)';
+    for i=1:length(Y{1,1})
+        xPosLine = [xPosDataGroups{1}(i) xPosDataGroups{2}(i)];
         yPosLine = [Y{1,1}(i) Y{1,2}(i)];
         plot(xPosLine,yPosLine,'Color',[0.8 0.8 0.8]);
     end
@@ -121,7 +143,7 @@ if plotMean
         patch(pos+[-1,1,1,-1]*(BoxWidth+0.005), ...
             [meanData(pos)-semData(pos) meanData(pos)-semData(pos) meanData(pos)+semData(pos) meanData(pos)+semData(pos)], ...
             [1 1 1]);
-        scatter(pos, meanData(pos), medianMarkerSize+10, [0 0 0], 'filled');
+        scatter(pos, meanData(pos), medianMarkerSize+20, [0 0 0], 'filled');
     end
 end
 
@@ -149,7 +171,11 @@ if showSignificance
     if commonYLim
         set(ax,'YLim',setYLim);
     else
-        set(ax,'YLim',[commonMin-yPositionLine*2 commonMax+yPositionLine*6]);
+        % Determine Y-axis limits based on data range
+        dataMin = min([min(Y{:,1}) min(Y{:,2})]);
+        dataMax = max([max(Y{:,1}) max(Y{:,2})]);
+        yRangeBuffer = (dataMax - dataMin) * 0.1; % Add 10% buffer to y-axis range
+        set(ax,'YLim',[dataMin-yRangeBuffer dataMax+yPositionLine*6]);
     end
 
     % shows the p-value
